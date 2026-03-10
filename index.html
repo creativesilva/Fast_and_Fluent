@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
   <meta name="theme-color" content="#f8fafc" />
-  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_favicon.png?v=3" />
-  <link rel="icon" type="image/png" sizes="32x32" href="rocket_book_favicon.png?v=3" />
-  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_favicon.png?v=3" />
-  <link rel="shortcut icon" href="rocket_book_favicon.png?v=3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_favicon.png?v=4" />
+  <link rel="icon" type="image/png" sizes="32x32" href="rocket_book_favicon.png?v=4" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_favicon.png?v=4" />
+  <link rel="shortcut icon" href="rocket_book_favicon.png?v=4" />
   <title>Rocket Book</title>
   <style>
     :root {
@@ -148,8 +148,17 @@
       overflow: hidden;
     }
 
-    .rocket-logo {
+    .home-logo {
       width: min(44vw, 145px);
+      height: auto;
+      margin: 0 0 10px 0;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
+    }
+
+    .game-logo {
+      width: min(62vw, 240px);
+      max-height: 170px;
       height: auto;
       margin: 0 0 10px 0;
       object-fit: contain;
@@ -388,8 +397,13 @@
         font-size: 18px;
       }
 
-      .rocket-logo {
+      .home-logo {
         width: min(46vw, 130px);
+      }
+
+      .game-logo {
+        width: min(68vw, 220px);
+        max-height: 150px;
       }
 
       .result-text {
@@ -411,7 +425,7 @@
     </div>
 
     <div class="screen active" id="homeScreen">
-      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
+      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="home-logo" />
       <div class="title">Rocket Book</div>
       <div class="small-note">
         Pick a reading game to begin.
@@ -424,8 +438,7 @@
     </div>
 
     <div class="screen" id="fastHomeScreen">
-      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
-      <div class="title">Fast &amp; Fluent</div>
+      <img src="fast_and_fluent_logo.png" alt="Fast and Fluent logo" class="game-logo" />
       <div class="subtitle" id="fastHomeTitle">Wonders Unit 5 Week 1</div>
       <div class="small-note">
         Read each sentence out loud. Tap Start to go in order, or tap Shuffle for Ultra Super Duper Hard Mode.
@@ -449,8 +462,7 @@
     </div>
 
     <div class="screen" id="rainbowHomeScreen">
-      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
-      <div class="title">Rainbow Reading</div>
+      <img src="rainbow_reader_logo.png" alt="Rainbow Reader logo" class="game-logo" />
       <div class="rainbow-subtitle">Choose a color list</div>
       <div class="color-grid">
         <button class="red-btn" data-color="Red" type="button">Red</button>
@@ -463,7 +475,7 @@
     </div>
 
     <div class="screen" id="rainbowModeScreen">
-      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
+      <img src="rainbow_reader_logo.png" alt="Rainbow Reader logo" class="game-logo" />
       <div class="title" id="rainbowModeTitle">Red List</div>
       <div class="small-note">
         Practice your words in order, or tap Shuffle for a mixed-up challenge.
