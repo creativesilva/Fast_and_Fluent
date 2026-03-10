@@ -128,6 +128,14 @@
       display: flex;
     }
 
+    .home-logo {
+      width: min(42vw, 130px);
+      height: auto;
+      margin: 8px 0 12px 0;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
+    }
+
     .badge {
       display: inline-block;
       padding: 8px 14px;
@@ -316,6 +324,10 @@
       .progress-text {
         font-size: 18px;
       }
+
+      .home-logo {
+        width: min(46vw, 120px);
+      }
     }
   </style>
 </head>
@@ -327,6 +339,11 @@
     </div>
 
     <div class="screen active" id="startScreen">
+      <img
+        src="shaw-logo.png"
+        alt="School logo"
+        class="home-logo"
+      />
       <div class="badge">Ms. Canby’s Reading Practice</div>
       <div class="title">Fast &amp; Fluent</div>
       <div class="subtitle">Wonders Unit 5 Week 1</div>
@@ -345,8 +362,8 @@
       </div>
       <div class="mode-label" id="modeLabel"></div>
       <div class="buttons">
-        <button class="done-btn" id="doneBtn" type="button">Done</button>
         <button class="reset-btn" id="resetBtn" type="button">Reset</button>
+        <button class="done-btn" id="doneBtn" type="button">Done</button>
       </div>
     </div>
 
