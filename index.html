@@ -7,15 +7,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
   <meta name="theme-color" content="#f8fafc" />
-  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_logo.png" />
-  <link rel="icon" type="image/png" href="rocket_book_logo.png" />
-  <link rel="shortcut icon" href="rocket_book_logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_favicon.png?v=2" />
+  <link rel="icon" type="image/png" sizes="32x32" href="rocket_book_favicon.png?v=2" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_favicon.png?v=2" />
+  <link rel="shortcut icon" href="rocket_book_favicon.png?v=2" />
   <title>Rocket Book</title>
   <style>
     :root {
       --bg1: #fff7ed;
       --bg2: #eff6ff;
-      --card: rgba(255,255,255,0.94);
+      --card: rgba(255,255,255,0.95);
       --text: #172033;
       --muted: #5f6b85;
       --green: #16a34a;
@@ -49,10 +50,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: max(12px, env(safe-area-inset-top));
-      padding-right: max(12px, env(safe-area-inset-right));
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
-      padding-left: max(12px, env(safe-area-inset-left));
+      padding-top: max(14px, env(safe-area-inset-top));
+      padding-right: max(14px, env(safe-area-inset-right));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      padding-left: max(14px, env(safe-area-inset-left));
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -66,15 +67,15 @@
 
     .app {
       width: min(100%, 430px);
-      min-height: min(92vh, 860px);
-      min-height: min(92dvh, 860px);
+      min-height: min(86vh, 800px);
+      min-height: min(86dvh, 800px);
       background: var(--card);
       border-radius: 30px;
       box-shadow: var(--shadow);
-      padding: 18px;
+      padding: 18px 18px 20px 18px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.85);
@@ -102,7 +103,7 @@
       justify-content: center;
       text-align: center;
       flex-direction: column;
-      padding: 10px 4px;
+      padding: 6px 4px 0 4px;
       position: relative;
       z-index: 1;
     }
@@ -116,23 +117,23 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-bottom: 10px;
+      gap: 4px;
+      margin-bottom: 4px;
       position: relative;
       z-index: 1;
       text-align: center;
-      min-height: 96px;
+      min-height: 78px;
     }
 
     .progress-text {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 900;
       line-height: 1.1;
       color: #111827;
     }
 
     .timer-text {
-      font-size: 46px;
+      font-size: 44px;
       font-weight: 900;
       line-height: 1;
       color: #111827;
@@ -140,13 +141,15 @@
     }
 
     .timer-text.hidden {
-      display: none;
+      visibility: hidden;
+      height: 0;
+      overflow: hidden;
     }
 
     .rocket-logo {
-      width: min(48vw, 170px);
+      width: min(44vw, 145px);
       height: auto;
-      margin: 6px 0 12px 0;
+      margin: 0 0 10px 0;
       object-fit: contain;
       filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
     }
@@ -157,42 +160,42 @@
       border-radius: 999px;
       font-size: 13px;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: #fff;
       background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
       box-shadow: 0 10px 20px rgba(139,92,246,0.20);
     }
 
     .title {
-      font-size: clamp(34px, 8vw, 54px);
+      font-size: clamp(34px, 8vw, 52px);
       font-weight: 900;
       line-height: 1.03;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       letter-spacing: -0.6px;
       color: var(--text);
     }
 
     .subtitle {
-      font-size: clamp(20px, 4.8vw, 26px);
+      font-size: clamp(19px, 4.8vw, 25px);
       line-height: 1.2;
       color: #374151;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-weight: 700;
     }
 
     .small-note {
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.38;
       color: var(--muted);
-      max-width: 330px;
-      margin-bottom: 16px;
+      max-width: 320px;
+      margin-bottom: 14px;
     }
 
     .micro-note {
       font-size: 12px;
       line-height: 1.2;
       color: var(--muted);
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .menu-buttons,
@@ -207,11 +210,11 @@
 
     .menu-buttons,
     .buttons {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .color-grid {
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     button {
@@ -274,7 +277,7 @@
     .sentence-wrap,
     .word-wrap {
       width: 100%;
-      min-height: 250px;
+      min-height: 210px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -285,7 +288,7 @@
     .rainbow-word {
       font-size: clamp(28px, 7vw, 44px);
       font-weight: 800;
-      line-height: 1.32;
+      line-height: 1.28;
       max-width: 100%;
       margin: 0 auto;
       color: var(--text);
@@ -297,11 +300,11 @@
     }
 
     .mode-label {
-      margin-top: 8px;
-      font-size: 17px;
+      margin-top: 6px;
+      font-size: 16px;
       font-weight: 800;
       color: #b91c1c;
-      min-height: 24px;
+      min-height: 20px;
     }
 
     .rainbow-subtitle {
@@ -313,43 +316,43 @@
     }
 
     .result-title {
-      font-size: clamp(30px, 8vw, 52px);
+      font-size: clamp(30px, 8vw, 50px);
       font-weight: 900;
-      margin-bottom: 10px;
-      line-height: 1.06;
+      margin-bottom: 8px;
+      line-height: 1.04;
       color: var(--text);
     }
 
     .result-time {
-      font-size: clamp(28px, 7vw, 44px);
+      font-size: clamp(26px, 7vw, 42px);
       font-weight: 900;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: var(--green);
-      line-height: 1.1;
+      line-height: 1.08;
     }
 
     .result-text {
-      font-size: 18px;
-      line-height: 1.35;
-      max-width: 320px;
-      margin: 0 auto 12px auto;
+      font-size: 17px;
+      line-height: 1.32;
+      max-width: 310px;
+      margin: 0 auto 10px auto;
       color: #243047;
     }
 
     .celebration-img {
-      width: min(52vw, 190px);
-      max-height: 190px;
+      width: min(46vw, 170px);
+      max-height: 170px;
       object-fit: contain;
       height: auto;
-      border-radius: 24px;
-      margin-top: 4px;
+      border-radius: 22px;
+      margin-top: 2px;
       box-shadow: 0 12px 28px rgba(0,0,0,.14);
       background: #fff;
       padding: 6px;
     }
 
     .compact-buttons {
-      margin-top: 16px;
+      margin-top: 12px;
     }
 
     @media (max-width: 390px) {
@@ -365,11 +368,11 @@
 
       .sentence-wrap,
       .word-wrap {
-        min-height: 220px;
+        min-height: 190px;
       }
 
       .timer-text {
-        font-size: 40px;
+        font-size: 38px;
       }
 
       .progress-text {
@@ -377,16 +380,16 @@
       }
 
       .rocket-logo {
-        width: min(52vw, 155px);
+        width: min(46vw, 130px);
       }
 
       .result-text {
-        font-size: 17px;
+        font-size: 16px;
       }
 
       .celebration-img {
-        width: min(56vw, 180px);
-        max-height: 180px;
+        width: min(50vw, 160px);
+        max-height: 160px;
       }
     }
   </style>
@@ -400,7 +403,6 @@
 
     <div class="screen active" id="homeScreen">
       <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
-      <div class="badge">Ms. Canby’s Reading Practice</div>
       <div class="title">Rocket Book</div>
       <div class="small-note">
         Pick a reading game to begin.
@@ -413,7 +415,7 @@
     </div>
 
     <div class="screen" id="fastHomeScreen">
-      <div class="badge">Fast &amp; Fluent</div>
+      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
       <div class="title">Fast &amp; Fluent</div>
       <div class="subtitle" id="fastHomeTitle">Wonders Unit 5 Week 1</div>
       <div class="small-note">
@@ -438,7 +440,7 @@
     </div>
 
     <div class="screen" id="rainbowHomeScreen">
-      <div class="badge">Rainbow Reading</div>
+      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
       <div class="title">Rainbow Reading</div>
       <div class="rainbow-subtitle">Choose a color list</div>
       <div class="color-grid">
@@ -452,7 +454,7 @@
     </div>
 
     <div class="screen" id="rainbowModeScreen">
-      <div class="badge">Rainbow Reading</div>
+      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="rocket-logo" />
       <div class="title" id="rainbowModeTitle">Red List</div>
       <div class="small-note">
         Practice your words in order, or shuffle them for a mixed-up challenge.
@@ -476,7 +478,6 @@
     </div>
 
     <div class="screen" id="finishScreen">
-      <div class="badge" id="finishBadge">Reading Practice</div>
       <div class="result-title" id="finishTitle">Great Job, Reader!</div>
       <div class="result-time" id="finishTime">Final Time: 00:00.0</div>
       <div class="result-text" id="finishText">You finished your practice.</div>
@@ -557,7 +558,6 @@
     const rainbowWordText = document.getElementById("rainbowWordText");
     const rainbowModeLabel = document.getElementById("rainbowModeLabel");
 
-    const finishBadge = document.getElementById("finishBadge");
     const finishTitle = document.getElementById("finishTitle");
     const finishTime = document.getElementById("finishTime");
     const finishText = document.getElementById("finishText");
@@ -616,16 +616,16 @@
         progressText.textContent = "Choose a Game";
         timerText.classList.add("hidden");
       } else if (currentAppMode === "fastHome") {
-        progressText.textContent = "Fast & Fluent";
+        progressText.textContent = "";
         timerText.classList.add("hidden");
       } else if (currentAppMode === "fastGame") {
         progressText.textContent = `Sentence ${fastIndex + 1} of ${fastDeck.length}`;
         timerText.classList.remove("hidden");
       } else if (currentAppMode === "rainbowHome") {
-        progressText.textContent = "Rainbow Reading";
+        progressText.textContent = "";
         timerText.classList.add("hidden");
       } else if (currentAppMode === "rainbowMode") {
-        progressText.textContent = `${rainbowCurrentColor} List`;
+        progressText.textContent = "";
         timerText.classList.add("hidden");
       } else if (currentAppMode === "rainbowGame") {
         progressText.textContent = `${rainbowCurrentColor} ${rainbowIndex + 1} of ${rainbowDeck.length}`;
@@ -692,7 +692,6 @@
       fastIndex++;
       if (fastIndex >= fastDeck.length) {
         stopFastTimer();
-        finishBadge.textContent = "Fast & Fluent";
         finishTitle.textContent = "Great Job, Reader!";
         finishTime.textContent = `Final Time: ${formatTime(fastElapsedMs)}`;
         finishTime.style.display = "block";
@@ -738,7 +737,6 @@
     function advanceRainbowWord() {
       rainbowIndex++;
       if (rainbowIndex >= rainbowDeck.length) {
-        finishBadge.textContent = "Rainbow Reading";
         finishTitle.textContent = `${rainbowCurrentColor} Complete!`;
         finishTime.style.display = "none";
         finishText.textContent = `You finished the ${rainbowCurrentColor.toLowerCase()} list. Great reading!`;
