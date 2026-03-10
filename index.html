@@ -30,7 +30,6 @@
       --hard2: #e11d48;
       --hard3: #b91c1c;
       --shadow: 0 18px 40px rgba(0,0,0,0.12);
-      --soft-shadow: 0 12px 28px rgba(0,0,0,0.16);
     }
     * {
       box-sizing: border-box;
@@ -168,9 +167,9 @@
       filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
     }
     .game-logo {
-      width: min(58vw, 215px);
-      max-width: 215px;
-      max-height: 180px;
+      width: min(67vw, 247px);
+      max-width: 247px;
+      max-height: 207px;
       height: auto;
       margin: 0 0 12px 0;
       object-fit: contain;
@@ -277,8 +276,7 @@
       background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%);
       color: #fff;
     }
-    .sentence-wrap,
-    .word-wrap {
+    .sentence-wrap {
       width: 100%;
       min-height: 210px;
       display: flex;
@@ -286,14 +284,30 @@
       justify-content: center;
       padding: 6px 6px;
     }
-    .sentence,
-    .rainbow-word {
+    .word-wrap {
+      width: 100%;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px 4px 6px;
+    }
+    .sentence {
       font-size: clamp(28px, 7vw, 44px);
       font-weight: 800;
       line-height: 1.28;
       max-width: 100%;
       margin: 0 auto;
       color: var(--text);
+    }
+    .rainbow-word {
+      font-size: clamp(52px, 13vw, 78px);
+      font-weight: 900;
+      line-height: 1.05;
+      max-width: 100%;
+      margin: 0 auto;
+      color: var(--text);
+      letter-spacing: -0.5px;
     }
     .sentence u {
       text-decoration-thickness: 2px;
@@ -316,29 +330,50 @@
       margin-bottom: 8px;
       font-weight: 700;
     }
-    .stats-row {
+    .rainbow-stats-top {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 14px;
       flex-wrap: wrap;
       width: 100%;
-      margin-top: 6px;
-      margin-bottom: 2px;
+      margin: 2px 0 0 0;
+      font-size: 18px;
+      font-weight: 900;
+      color: #1f2937;
     }
-    .stat-pill {
-      padding: 8px 12px;
+    .rainbow-stats-top .missed-text {
+      color: #dc2626;
+    }
+    .rainbow-stats-top .correct-text {
+      color: #16a34a;
+    }
+    .rainbow-button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+    .rainbow-small-btn {
+      min-width: 132px;
+      padding: 12px 16px;
+      font-size: 16px;
       border-radius: 999px;
-      font-size: 14px;
-      font-weight: 800;
-      color: #fff;
     }
-    .stat-correct {
-      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-      box-shadow: 0 8px 16px rgba(34,197,94,0.18);
+    .rainbow-reset-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 2px;
     }
-    .stat-missed {
-      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
-      box-shadow: 0 8px 16px rgba(239,68,68,0.18);
+    .rainbow-reset-btn {
+      min-width: 132px;
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 999px;
     }
     .result-title {
       font-size: clamp(30px, 8vw, 50px);
@@ -386,9 +421,11 @@
       .color-grid {
         flex-direction: column;
       }
-      .sentence-wrap,
-      .word-wrap {
+      .sentence-wrap {
         min-height: 190px;
+      }
+      .word-wrap {
+        min-height: 130px;
       }
       .timer-text {
         font-size: 38px;
@@ -402,9 +439,9 @@
         max-height: 130px;
       }
       .game-logo {
-        width: min(60vw, 200px);
-        max-width: 200px;
-        max-height: 165px;
+        width: min(69vw, 230px);
+        max-width: 230px;
+        max-height: 190px;
       }
       .result-text {
         font-size: 16px;
@@ -413,8 +450,21 @@
         width: min(50vw, 160px);
         max-height: 160px;
       }
-      .stats-row {
+      .rainbow-word {
+        font-size: clamp(46px, 12vw, 66px);
+      }
+      .rainbow-stats-top {
+        font-size: 17px;
+        gap: 12px;
+      }
+      .rainbow-button-row {
         gap: 10px;
+      }
+      .rainbow-small-btn,
+      .rainbow-reset-btn {
+        min-width: 118px;
+        font-size: 15px;
+        padding: 11px 14px;
       }
     }
   </style>
@@ -493,15 +543,18 @@
       <div class="word-wrap">
         <div class="rainbow-word" id="rainbowWordText"></div>
       </div>
-      <div class="stats-row">
-        <div class="stat-pill stat-missed" id="rainbowMissedCount">Missed First: 0</div>
-        <div class="stat-pill stat-correct" id="rainbowCorrectCount">Correct First: 0</div>
+      <div class="rainbow-stats-top">
+        <span id="rainbowProgressTop">Yellow 0 of 25</span>
+        <span class="missed-text" id="rainbowMissedCount">Missed: 0</span>
+        <span class="correct-text" id="rainbowCorrectCount">Correct: 0</span>
       </div>
       <div class="mode-label" id="rainbowModeLabel"></div>
-      <div class="buttons compact-buttons">
-        <button class="missed-btn" id="rainbowMissedBtn" type="button">Missed</button>
-        <button class="neutral-btn" id="rainbowResetBtn" type="button">Reset</button>
-        <button class="primary-btn" id="rainbowCorrectBtn" type="button">Correct</button>
+      <div class="rainbow-button-row">
+        <button class="missed-btn rainbow-small-btn" id="rainbowMissedBtn" type="button">Missed</button>
+        <button class="primary-btn rainbow-small-btn" id="rainbowCorrectBtn" type="button">Correct</button>
+      </div>
+      <div class="rainbow-reset-wrap">
+        <button class="neutral-btn rainbow-reset-btn" id="rainbowResetBtn" type="button">Reset</button>
       </div>
     </div>
 
@@ -575,6 +628,7 @@
     const rainbowModeTitle = document.getElementById("rainbowModeTitle");
     const rainbowWordText = document.getElementById("rainbowWordText");
     const rainbowModeLabel = document.getElementById("rainbowModeLabel");
+    const rainbowProgressTop = document.getElementById("rainbowProgressTop");
     const rainbowMissedCount = document.getElementById("rainbowMissedCount");
     const rainbowCorrectCount = document.getElementById("rainbowCorrectCount");
 
@@ -587,7 +641,6 @@
     fastHomeTitle.textContent = fastTitle;
 
     let currentAppMode = "home";
-    let finishMode = "home";
 
     let fastDeck = [];
     let fastIndex = 0;
@@ -667,12 +720,13 @@
         timerText.classList.add("hidden");
         setHardMode(false);
       } else if (currentAppMode === "rainbowGame") {
-        progressText.textContent = `${rainbowCurrentColor} ${rainbowCorrectFirst + rainbowMissedFirst} of ${rainbowLists[rainbowCurrentColor].length}`;
+        progressText.textContent = "";
         timerText.classList.add("hidden");
         setHardMode(rainbowShuffled);
       } else if (currentAppMode === "finish") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        setHardMode(false);
       }
     }
 
@@ -744,7 +798,6 @@
       fastIndex++;
       if (fastIndex >= fastDeck.length) {
         stopFastTimer();
-        finishMode = "fast";
         finishTitle.textContent = "Great Job, Reader!";
         finishTime.textContent = `Final Time: ${formatTime(fastElapsedMs)}`;
         finishTime.style.display = "block";
@@ -754,7 +807,6 @@
           { label: "Read Again", className: "primary-btn", onClick: () => resetFastGame() },
           { label: "Home", className: "neutral-btn", onClick: () => goHome() }
         ]);
-        setHardMode(false);
         showScreen("finish");
         return;
       }
@@ -781,8 +833,11 @@
     }
 
     function updateRainbowStats() {
-      rainbowMissedCount.textContent = `Missed First: ${rainbowMissedFirst}`;
-      rainbowCorrectCount.textContent = `Correct First: ${rainbowCorrectFirst}`;
+      const totalCount = rainbowLists[rainbowCurrentColor].length;
+      const seenCount = rainbowCorrectFirst + rainbowMissedFirst;
+      rainbowProgressTop.textContent = `${rainbowCurrentColor} ${seenCount} of ${totalCount}`;
+      rainbowMissedCount.textContent = `Missed: ${rainbowMissedFirst}`;
+      rainbowCorrectCount.textContent = `Correct: ${rainbowCorrectFirst}`;
     }
 
     function updateRainbowModeLabel() {
@@ -811,17 +866,15 @@
           rainbowDeck = rainbowShuffled ? shuffleArray(retryWords) : retryWords;
           rainbowIndex = 0;
         } else {
-          finishMode = "rainbow";
           finishTitle.textContent = `${rainbowCurrentColor} Complete!`;
           finishTime.style.display = "none";
-          finishText.textContent = `Correct first: ${rainbowCorrectFirst}. Missed first: ${rainbowMissedFirst}. Great reading!`;
+          finishText.textContent = `Correct: ${rainbowCorrectFirst}. Missed: ${rainbowMissedFirst}. Great reading!`;
           celebrationImg.src = getRandomCelebrationImage();
           setFinishButtons([
             { label: "Read Again", className: "primary-btn", onClick: () => showScreen("rainbowMode") },
             { label: "Choose Another List", className: "secondary-btn", onClick: () => showScreen("rainbowHome") },
             { label: "Home", className: "neutral-btn", onClick: () => goHome() }
           ]);
-          setHardMode(false);
           showScreen("finish");
           return;
         }
@@ -889,7 +942,6 @@
       rainbowCorrectFirst = 0;
       rainbowMissedFirst = 0;
       rainbowPendingMissed = [];
-      finishMode = "home";
       setHardMode(false);
       showScreen("home");
     }
