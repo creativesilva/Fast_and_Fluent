@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
   <meta name="theme-color" content="#f8fafc" />
-  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_favicon.png?v=4" />
-  <link rel="icon" type="image/png" sizes="32x32" href="rocket_book_favicon.png?v=4" />
-  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_favicon.png?v=4" />
-  <link rel="shortcut icon" href="rocket_book_favicon.png?v=4" />
+  <link rel="apple-touch-icon" sizes="180x180" href="rocket_book_favicon.png?v=5" />
+  <link rel="icon" type="image/png" sizes="32x32" href="rocket_book_favicon.png?v=5" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_favicon.png?v=5" />
+  <link rel="shortcut icon" href="rocket_book_favicon.png?v=5" />
   <title>Rocket Book</title>
   <style>
     :root {
@@ -28,7 +28,9 @@
       --red: #ef4444;
       --hard1: #ff5a1f;
       --hard2: #e11d48;
+      --hard3: #b91c1c;
       --shadow: 0 18px 40px rgba(0,0,0,0.12);
+      --soft-shadow: 0 12px 28px rgba(0,0,0,0.16);
     }
 
     * {
@@ -71,7 +73,7 @@
       width: min(100%, 430px);
       min-height: min(86vh, 800px);
       min-height: min(86dvh, 800px);
-      background: var(--card);
+      background: rgba(255,255,255,0.95);
       border-radius: 30px;
       box-shadow: var(--shadow);
       padding: 18px 18px 20px 18px;
@@ -81,6 +83,7 @@
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.85);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .app::before {
@@ -96,6 +99,21 @@
           rgba(34,197,94,0.06) 60%,
           rgba(59,130,246,0.06) 80%,
           rgba(139,92,246,0.06) 100%);
+      transition: opacity 0.25s ease;
+    }
+
+    .app.hard-mode {
+      background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%);
+      border-color: rgba(225,29,72,0.18);
+      box-shadow: 0 20px 42px rgba(225,29,72,0.18);
+    }
+
+    .app.hard-mode::before {
+      background:
+        linear-gradient(180deg,
+          rgba(255,90,31,0.10) 0%,
+          rgba(225,29,72,0.10) 55%,
+          rgba(185,28,28,0.10) 100%);
     }
 
     .screen {
@@ -124,7 +142,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      min-height: 78px;
+      min-height: 82px;
     }
 
     .progress-text {
@@ -132,6 +150,7 @@
       font-weight: 900;
       line-height: 1.1;
       color: #111827;
+      transition: color 0.25s ease;
     }
 
     .timer-text {
@@ -140,6 +159,12 @@
       line-height: 1;
       color: #111827;
       letter-spacing: -1px;
+      transition: color 0.25s ease;
+    }
+
+    .app.hard-mode .progress-text,
+    .app.hard-mode .timer-text {
+      color: #8a1024;
     }
 
     .timer-text.hidden {
@@ -148,17 +173,11 @@
       overflow: hidden;
     }
 
-    .home-logo {
-      width: min(44vw, 145px);
-      height: auto;
-      margin: 0 0 10px 0;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
-    }
-
+    .home-logo,
     .game-logo {
-      width: min(62vw, 240px);
-      max-height: 170px;
+      width: min(44vw, 145px);
+      max-width: 145px;
+      max-height: 145px;
       height: auto;
       margin: 0 0 10px 0;
       object-fit: contain;
@@ -256,7 +275,7 @@
     }
 
     .shuffle-hard-btn {
-      background: linear-gradient(180deg, var(--hard1) 0%, var(--hard2) 100%);
+      background: linear-gradient(180deg, var(--hard1) 0%, var(--hard2) 55%, var(--hard3) 100%);
       color: #ffffff;
       box-shadow: 0 10px 22px rgba(225,29,72,0.28);
     }
@@ -264,6 +283,12 @@
     .neutral-btn {
       background: linear-gradient(180deg, #dbe2ea 0%, #c4ccd8 100%);
       color: #1f2937;
+    }
+
+    .missed-btn {
+      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(239,68,68,0.22);
     }
 
     .red-btn {
@@ -324,12 +349,44 @@
       min-height: 20px;
     }
 
+    .app.hard-mode .mode-label {
+      color: #9f1239;
+    }
+
     .rainbow-subtitle {
       font-size: clamp(18px, 4vw, 22px);
       line-height: 1.2;
       color: #374151;
       margin-bottom: 8px;
       font-weight: 700;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 2px;
+    }
+
+    .stat-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-correct {
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      box-shadow: 0 8px 16px rgba(34,197,94,0.18);
+    }
+
+    .stat-missed {
+      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+      box-shadow: 0 8px 16px rgba(239,68,68,0.18);
     }
 
     .result-title {
@@ -397,13 +454,11 @@
         font-size: 18px;
       }
 
-      .home-logo {
-        width: min(46vw, 130px);
-      }
-
+      .home-logo,
       .game-logo {
-        width: min(68vw, 220px);
-        max-height: 150px;
+        width: min(46vw, 130px);
+        max-width: 130px;
+        max-height: 130px;
       }
 
       .result-text {
@@ -413,6 +468,10 @@
       .celebration-img {
         width: min(50vw, 160px);
         max-height: 160px;
+      }
+
+      .stats-row {
+        gap: 10px;
       }
     }
   </style>
@@ -446,7 +505,7 @@
       <div class="menu-buttons">
         <button class="primary-btn" id="fastStartBtn" type="button">Start</button>
         <button class="shuffle-hard-btn" id="fastShuffleBtn" type="button">Shuffle</button>
-        <button class="neutral-btn" id="fastBackBtn" type="button">Back</button>
+        <button class="neutral-btn" id="fastBackBtn" type="button">Home</button>
       </div>
     </div>
 
@@ -470,7 +529,7 @@
         <button class="yellow-btn" data-color="Yellow" type="button">Yellow</button>
         <button class="green-btn" data-color="Green" type="button">Green</button>
         <button class="blue-btn" data-color="Blue" type="button">Blue</button>
-        <button class="neutral-btn" id="rainbowBackBtn" type="button">Back</button>
+        <button class="neutral-btn" id="rainbowBackBtn" type="button">Home</button>
       </div>
     </div>
 
@@ -483,7 +542,7 @@
       <div class="menu-buttons">
         <button class="primary-btn" id="rainbowStartBtn" type="button">Start</button>
         <button class="shuffle-hard-btn" id="rainbowShuffleBtn" type="button">Shuffle</button>
-        <button class="neutral-btn" id="rainbowModeBackBtn" type="button">Back</button>
+        <button class="neutral-btn" id="rainbowModeBackBtn" type="button">Home</button>
       </div>
     </div>
 
@@ -491,10 +550,15 @@
       <div class="word-wrap">
         <div class="rainbow-word" id="rainbowWordText"></div>
       </div>
+      <div class="stats-row">
+        <div class="stat-pill stat-missed" id="rainbowMissedCount">Missed First: 0</div>
+        <div class="stat-pill stat-correct" id="rainbowCorrectCount">Correct First: 0</div>
+      </div>
       <div class="mode-label" id="rainbowModeLabel"></div>
       <div class="buttons compact-buttons">
+        <button class="missed-btn" id="rainbowMissedBtn" type="button">Missed</button>
         <button class="neutral-btn" id="rainbowResetBtn" type="button">Reset</button>
-        <button class="primary-btn" id="rainbowDoneBtn" type="button">Done</button>
+        <button class="primary-btn" id="rainbowCorrectBtn" type="button">Correct</button>
       </div>
     </div>
 
@@ -504,7 +568,7 @@
       <div class="result-text" id="finishText">You finished your practice.</div>
       <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration image" />
       <div class="buttons compact-buttons">
-        <button class="primary-btn" id="backHomeBtn" type="button">Back to Home</button>
+        <button class="primary-btn" id="finishMainBtn" type="button">Back to Home</button>
       </div>
     </div>
   </div>
@@ -568,6 +632,7 @@
       finish: document.getElementById("finishScreen")
     };
 
+    const app = document.getElementById("app");
     const progressText = document.getElementById("progressText");
     const timerText = document.getElementById("timerText");
 
@@ -578,15 +643,19 @@
     const rainbowModeTitle = document.getElementById("rainbowModeTitle");
     const rainbowWordText = document.getElementById("rainbowWordText");
     const rainbowModeLabel = document.getElementById("rainbowModeLabel");
+    const rainbowMissedCount = document.getElementById("rainbowMissedCount");
+    const rainbowCorrectCount = document.getElementById("rainbowCorrectCount");
 
     const finishTitle = document.getElementById("finishTitle");
     const finishTime = document.getElementById("finishTime");
     const finishText = document.getElementById("finishText");
     const celebrationImg = document.getElementById("celebrationImg");
+    const finishMainBtn = document.getElementById("finishMainBtn");
 
     fastHomeTitle.textContent = fastTitle;
 
     let currentAppMode = "home";
+    let finishReturnTarget = "home";
 
     let fastDeck = [];
     let fastIndex = 0;
@@ -599,6 +668,10 @@
     let rainbowDeck = [];
     let rainbowIndex = 0;
     let rainbowShuffled = false;
+    let rainbowFirstSeen = new Set();
+    let rainbowCorrectFirst = 0;
+    let rainbowMissedFirst = 0;
+    let rainbowPendingMissed = [];
 
     function shuffleArray(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -625,6 +698,14 @@
       return `${mm}:${ss}.${tenths}`;
     }
 
+    function setHardMode(isHard) {
+      if (isHard) {
+        app.classList.add("hard-mode");
+      } else {
+        app.classList.remove("hard-mode");
+      }
+    }
+
     function showScreen(screenKey) {
       Object.values(screens).forEach(screen => screen.classList.remove("active"));
       screens[screenKey].classList.add("active");
@@ -636,21 +717,27 @@
       if (currentAppMode === "home") {
         progressText.textContent = "Choose a Game";
         timerText.classList.add("hidden");
+        setHardMode(false);
       } else if (currentAppMode === "fastHome") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        setHardMode(false);
       } else if (currentAppMode === "fastGame") {
         progressText.textContent = `Sentence ${fastIndex + 1} of ${fastDeck.length}`;
         timerText.classList.remove("hidden");
+        setHardMode(fastHardMode);
       } else if (currentAppMode === "rainbowHome") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        setHardMode(false);
       } else if (currentAppMode === "rainbowMode") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        setHardMode(false);
       } else if (currentAppMode === "rainbowGame") {
-        progressText.textContent = `${rainbowCurrentColor} ${rainbowIndex + 1} of ${rainbowDeck.length}`;
+        progressText.textContent = `${rainbowCurrentColor} ${rainbowCorrectFirst + rainbowMissedFirst} of ${rainbowLists[rainbowCurrentColor].length}`;
         timerText.classList.add("hidden");
+        setHardMode(rainbowShuffled);
       } else if (currentAppMode === "finish") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
@@ -716,8 +803,11 @@
         finishTitle.textContent = "Great Job, Reader!";
         finishTime.textContent = `Final Time: ${formatTime(fastElapsedMs)}`;
         finishTime.style.display = "block";
-        finishText.textContent = "You finished all 10 sentences. Write your time on your sheet.";
+        finishText.textContent = "Write down your time, then read again and try to beat it.";
         celebrationImg.src = getRandomCelebrationImage();
+        finishMainBtn.textContent = "Read Again";
+        finishReturnTarget = "fastHome";
+        setHardMode(false);
         showScreen("finish");
         return;
       }
@@ -737,6 +827,15 @@
       }
       rainbowIndex = 0;
       rainbowShuffled = shuffleFirst;
+      rainbowFirstSeen = new Set();
+      rainbowCorrectFirst = 0;
+      rainbowMissedFirst = 0;
+      rainbowPendingMissed = [];
+    }
+
+    function updateRainbowStats() {
+      rainbowMissedCount.textContent = `Missed First: ${rainbowMissedFirst}`;
+      rainbowCorrectCount.textContent = `Correct First: ${rainbowCorrectFirst}`;
     }
 
     function updateRainbowModeLabel() {
@@ -745,6 +844,7 @@
 
     function showRainbowWord() {
       rainbowWordText.textContent = rainbowDeck[rainbowIndex];
+      updateRainbowStats();
       updateRainbowModeLabel();
       updateHeader();
     }
@@ -755,17 +855,52 @@
       showRainbowWord();
     }
 
-    function advanceRainbowWord() {
+    function goToNextRainbowWord() {
       rainbowIndex++;
+
       if (rainbowIndex >= rainbowDeck.length) {
-        finishTitle.textContent = `${rainbowCurrentColor} Complete!`;
-        finishTime.style.display = "none";
-        finishText.textContent = `You finished the ${rainbowCurrentColor.toLowerCase()} list. Great reading!`;
-        celebrationImg.src = getRandomCelebrationImage();
-        showScreen("finish");
-        return;
+        if (rainbowPendingMissed.length > 0) {
+          const retryWords = [...rainbowPendingMissed];
+          rainbowPendingMissed = [];
+          rainbowDeck = rainbowShuffled ? shuffleArray(retryWords) : retryWords;
+          rainbowIndex = 0;
+        } else {
+          finishTitle.textContent = `${rainbowCurrentColor} Complete!`;
+          finishTime.style.display = "none";
+          finishText.textContent = `Correct first: ${rainbowCorrectFirst}. Missed first: ${rainbowMissedFirst}. Great reading!`;
+          celebrationImg.src = getRandomCelebrationImage();
+          finishMainBtn.textContent = "Choose Another List";
+          finishReturnTarget = "rainbowHome";
+          setHardMode(false);
+          showScreen("finish");
+          return;
+        }
       }
+
       showRainbowWord();
+    }
+
+    function markRainbowCorrect() {
+      const currentWord = rainbowDeck[rainbowIndex];
+
+      if (!rainbowFirstSeen.has(currentWord)) {
+        rainbowFirstSeen.add(currentWord);
+        rainbowCorrectFirst++;
+      }
+
+      goToNextRainbowWord();
+    }
+
+    function markRainbowMissed() {
+      const currentWord = rainbowDeck[rainbowIndex];
+
+      if (!rainbowFirstSeen.has(currentWord)) {
+        rainbowFirstSeen.add(currentWord);
+        rainbowMissedFirst++;
+      }
+
+      rainbowPendingMissed.push(currentWord);
+      goToNextRainbowWord();
     }
 
     function resetFastGame() {
@@ -777,6 +912,7 @@
       fastDeck = [];
       fastIndex = 0;
       fastHardMode = false;
+      setHardMode(false);
       showScreen("fastHome");
     }
 
@@ -784,6 +920,11 @@
       rainbowDeck = [];
       rainbowIndex = 0;
       rainbowShuffled = false;
+      rainbowFirstSeen = new Set();
+      rainbowCorrectFirst = 0;
+      rainbowMissedFirst = 0;
+      rainbowPendingMissed = [];
+      setHardMode(false);
       showScreen("rainbowMode");
     }
 
@@ -799,7 +940,24 @@
       rainbowDeck = [];
       rainbowIndex = 0;
       rainbowShuffled = false;
+      rainbowFirstSeen = new Set();
+      rainbowCorrectFirst = 0;
+      rainbowMissedFirst = 0;
+      rainbowPendingMissed = [];
+      finishReturnTarget = "home";
+      setHardMode(false);
       showScreen("home");
+    }
+
+    function handleFinishMainButton() {
+      if (finishReturnTarget === "fastHome") {
+        resetFastGame();
+      } else if (finishReturnTarget === "rainbowHome") {
+        setHardMode(false);
+        showScreen("rainbowHome");
+      } else {
+        goHome();
+      }
     }
 
     document.getElementById("goFastBtn").addEventListener("click", () => showScreen("fastHome"));
@@ -812,17 +970,18 @@
     document.getElementById("fastResetBtn").addEventListener("click", resetFastGame);
 
     document.getElementById("rainbowBackBtn").addEventListener("click", goHome);
-    document.getElementById("rainbowModeBackBtn").addEventListener("click", () => showScreen("rainbowHome"));
+    document.getElementById("rainbowModeBackBtn").addEventListener("click", goHome);
     document.getElementById("rainbowStartBtn").addEventListener("click", () => launchRainbowGame(false));
     document.getElementById("rainbowShuffleBtn").addEventListener("click", () => launchRainbowGame(true));
-    document.getElementById("rainbowDoneBtn").addEventListener("click", advanceRainbowWord);
+    document.getElementById("rainbowCorrectBtn").addEventListener("click", markRainbowCorrect);
+    document.getElementById("rainbowMissedBtn").addEventListener("click", markRainbowMissed);
     document.getElementById("rainbowResetBtn").addEventListener("click", resetRainbowGame);
 
     document.querySelectorAll("[data-color]").forEach(button => {
       button.addEventListener("click", () => setRainbowColor(button.dataset.color));
     });
 
-    document.getElementById("backHomeBtn").addEventListener("click", goHome);
+    finishMainBtn.addEventListener("click", handleFinishMainButton);
 
     celebrationImg.src = getRandomCelebrationImage();
     updateHeader();
