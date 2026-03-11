@@ -231,22 +231,22 @@
     }
 
     .menu-buttons,
-    .buttons,
-    .color-grid {
+    .buttons {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
-    }
-
-    .menu-buttons,
-    .buttons {
       margin-top: 12px;
     }
 
     .color-grid {
-      margin-top: 8px;
+      width: 100%;
+      max-width: 360px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 14px;
+      margin-top: 10px;
     }
 
     button {
@@ -296,26 +296,41 @@
     .red-btn {
       background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
       color: #fff;
+      width: 100%;
+      min-width: 0;
     }
 
     .orange-btn {
       background: linear-gradient(180deg, #fdba74 0%, #fb923c 100%);
       color: #fff;
+      width: 100%;
+      min-width: 0;
     }
 
     .yellow-btn {
       background: linear-gradient(180deg, #fde68a 0%, #facc15 100%);
       color: #3b2f00;
+      width: 100%;
+      min-width: 0;
     }
 
     .green-btn {
       background: linear-gradient(180deg, #86efac 0%, #22c55e 100%);
       color: #fff;
+      width: 100%;
+      min-width: 0;
     }
 
     .blue-btn {
       background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%);
       color: #fff;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .color-grid .neutral-btn {
+      width: 100%;
+      min-width: 0;
     }
 
     .sentence-wrap {
@@ -475,16 +490,6 @@
     }
 
     @media (max-width: 390px) {
-      button {
-        width: 100%;
-      }
-
-      .menu-buttons,
-      .buttons,
-      .color-grid {
-        flex-direction: column;
-      }
-
       .sentence-wrap {
         min-height: 190px;
       }
@@ -534,6 +539,15 @@
         min-width: 118px;
         font-size: 15px;
         padding: 11px 14px;
+      }
+
+      .color-grid {
+        gap: 12px;
+      }
+
+      .color-grid button {
+        padding: 14px 12px;
+        font-size: 16px;
       }
     }
   </style>
