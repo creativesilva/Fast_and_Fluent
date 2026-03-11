@@ -11,10 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
   <meta name="theme-color" content="#f8fafc" />
 
-  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=9" />
-  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=9" />
-  <link rel="icon" type="image/png" sizes="512x512" href="rocket_book_logo.png?v=9" />
-  <link rel="shortcut icon" href="rocket_book_logo.png?v=9" />
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=10" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=10" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rocket_book_logo.png?v=10" />
+  <link rel="shortcut icon" href="rocket_book_logo.png?v=10" />
 
   <title>Rocket Book</title>
 
@@ -293,44 +293,42 @@
       box-shadow: 0 10px 20px rgba(239,68,68,0.22);
     }
 
+    .red-btn,
+    .orange-btn,
+    .yellow-btn,
+    .green-btn,
+    .blue-btn,
+    .color-grid .neutral-btn {
+      width: 100%;
+      min-width: 0;
+      padding: 14px 12px;
+      border-radius: 22px;
+      font-size: 16px;
+    }
+
     .red-btn {
       background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
       color: #fff;
-      width: 100%;
-      min-width: 0;
     }
 
     .orange-btn {
       background: linear-gradient(180deg, #fdba74 0%, #fb923c 100%);
       color: #fff;
-      width: 100%;
-      min-width: 0;
     }
 
     .yellow-btn {
       background: linear-gradient(180deg, #fde68a 0%, #facc15 100%);
       color: #3b2f00;
-      width: 100%;
-      min-width: 0;
     }
 
     .green-btn {
       background: linear-gradient(180deg, #86efac 0%, #22c55e 100%);
       color: #fff;
-      width: 100%;
-      min-width: 0;
     }
 
     .blue-btn {
       background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%);
       color: #fff;
-      width: 100%;
-      min-width: 0;
-    }
-
-    .color-grid .neutral-btn {
-      width: 100%;
-      min-width: 0;
     }
 
     .sentence-wrap {
@@ -544,11 +542,6 @@
       .color-grid {
         gap: 12px;
       }
-
-      .color-grid button {
-        padding: 14px 12px;
-        font-size: 16px;
-      }
     }
   </style>
 </head>
@@ -653,6 +646,10 @@
     </div>
   </div>
 
+  <audio id="celebrationSound" preload="auto">
+    <source src="celebration_sound.mp3" type="audio/mpeg" />
+  </audio>
+
   <script>
     const fastTitle = "Wonders Unit 5 Week 1";
 
@@ -723,6 +720,7 @@
     const finishText = document.getElementById("finishText");
     const celebrationImg = document.getElementById("celebrationImg");
     const finishButtons = document.getElementById("finishButtons");
+    const celebrationSound = document.getElementById("celebrationSound");
 
     fastHomeTitle.textContent = fastTitle;
 
@@ -739,7 +737,6 @@
     let rainbowDeck = [];
     let rainbowIndex = 0;
     let rainbowShuffled = false;
-    let rainbowFirstSeen = new Set();
     let rainbowCorrectCountValue = 0;
     let rainbowMissedCountValue = 0;
     let rainbowPendingMissed = [];
@@ -769,6 +766,18 @@
       return `${mm}:${ss}.${tenths}`;
     }
 
+    function playCelebrationSound() {
+      if (!celebrationSound) return;
+      celebrationSound.currentTime = 0;
+      celebrationSound.play().catch(() => {});
+    }
+
+    function stopCelebrationSound() {
+      if (!celebrationSound) return;
+      celebrationSound.pause();
+      celebrationSound.currentTime = 0;
+    }
+
     function setHardMode(isHard) {
       if (isHard) {
         app.classList.add("hard-mode");
@@ -782,6 +791,7 @@
       screens[screenKey].classList.add("active");
       currentAppMode = screenKey;
       updateHeader();
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
 
     function updateHeader() {
@@ -858,6 +868,7 @@
     }
 
     function launchFastGame(shuffleFirst = false) {
+      stopCelebrationSound();
       if (shuffleFirst) {
         buildFastShuffledDeck();
       } else {
@@ -893,6 +904,7 @@
           { label: "Read Again", className: "primary-btn", onClick: () => resetFastGame() },
           { label: "Home", className: "neutral-btn", onClick: () => goHome() }
         ]);
+        playCelebrationSound();
         showScreen("finish");
         return;
       }
@@ -912,7 +924,6 @@
       }
       rainbowIndex = 0;
       rainbowShuffled = shuffleFirst;
-      rainbowFirstSeen = new Set();
       rainbowCorrectCountValue = 0;
       rainbowMissedCountValue = 0;
       rainbowPendingMissed = [];
@@ -937,6 +948,7 @@
     }
 
     function launchRainbowGame(shuffleFirst = false) {
+      stopCelebrationSound();
       buildRainbowDeck(shuffleFirst);
       showScreen("rainbowGame");
       showRainbowWord();
@@ -961,6 +973,7 @@
             { label: "Choose Another List", className: "secondary-btn", onClick: () => showScreen("rainbowHome") },
             { label: "Home", className: "neutral-btn", onClick: () => goHome() }
           ]);
+          playCelebrationSound();
           showScreen("finish");
           return;
         }
@@ -970,29 +983,19 @@
     }
 
     function markRainbowCorrect() {
-      const currentWord = rainbowDeck[rainbowIndex];
-
-      if (!rainbowFirstSeen.has(currentWord)) {
-        rainbowFirstSeen.add(currentWord);
-      }
-
       rainbowCorrectCountValue++;
       goToNextRainbowWord();
     }
 
     function markRainbowMissed() {
       const currentWord = rainbowDeck[rainbowIndex];
-
-      if (!rainbowFirstSeen.has(currentWord)) {
-        rainbowFirstSeen.add(currentWord);
-        rainbowMissedCountValue++;
-      }
-
+      rainbowMissedCountValue++;
       rainbowPendingMissed.push(currentWord);
       goToNextRainbowWord();
     }
 
     function resetFastGame() {
+      stopCelebrationSound();
       clearInterval(fastTimerInterval);
       fastTimerInterval = null;
       fastStartTime = null;
@@ -1006,10 +1009,10 @@
     }
 
     function resetRainbowGame() {
+      stopCelebrationSound();
       rainbowDeck = [];
       rainbowIndex = 0;
       rainbowShuffled = false;
-      rainbowFirstSeen = new Set();
       rainbowCorrectCountValue = 0;
       rainbowMissedCountValue = 0;
       rainbowPendingMissed = [];
@@ -1018,6 +1021,7 @@
     }
 
     function goHome() {
+      stopCelebrationSound();
       clearInterval(fastTimerInterval);
       fastTimerInterval = null;
       fastStartTime = null;
@@ -1029,7 +1033,6 @@
       rainbowDeck = [];
       rainbowIndex = 0;
       rainbowShuffled = false;
-      rainbowFirstSeen = new Set();
       rainbowCorrectCountValue = 0;
       rainbowMissedCountValue = 0;
       rainbowPendingMissed = [];
