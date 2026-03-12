@@ -11,10 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="Rainbow Reader">
   <meta name="theme-color" content="#f8fafc">
 
-  <link rel="apple-touch-icon" href="rainbow_reader_logo.png?v=3">
-  <link rel="icon" type="image/png" sizes="192x192" href="rainbow_reader_logo.png?v=3">
-  <link rel="icon" type="image/png" sizes="512x512" href="rainbow_reader_logo.png?v=3">
-  <link rel="shortcut icon" href="rainbow_reader_logo.png?v=3">
+  <link rel="apple-touch-icon" href="rainbow_reader_logo.png?v=4">
+  <link rel="icon" type="image/png" sizes="192x192" href="rainbow_reader_logo.png?v=4">
+  <link rel="icon" type="image/png" sizes="512x512" href="rainbow_reader_logo.png?v=4">
+  <link rel="shortcut icon" href="rainbow_reader_logo.png?v=4">
 
   <title>Rainbow Reader</title>
 
@@ -25,16 +25,8 @@
       --text: #172033;
       --muted: #5f6b85;
       --green: #16a34a;
-      --yellow: #f59e0b;
-      --orange: #fb923c;
-      --pink: #ec4899;
-      --blue: #3b82f6;
-      --purple: #8b5cf6;
-      --red: #ef4444;
-      --hard1: #ff5a1f;
-      --hard2: #e11d48;
-      --hard3: #b91c1c;
       --shadow: 0 18px 40px rgba(0,0,0,0.12);
+      --soft-shadow: 0 12px 28px rgba(0,0,0,0.16);
     }
 
     * {
@@ -114,21 +106,60 @@
           rgba(34,197,94,0.06) 60%,
           rgba(59,130,246,0.06) 80%,
           rgba(139,92,246,0.06) 100%);
-      transition: opacity 0.25s ease;
     }
 
-    .app.hard-mode {
-      background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%);
-      border-color: rgba(225,29,72,0.18);
+    .app.theme-red {
+      background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 100%);
+      border-color: rgba(239,68,68,0.16);
+    }
+
+    .app.theme-orange {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+      border-color: rgba(251,146,60,0.16);
+    }
+
+    .app.theme-yellow {
+      background: linear-gradient(180deg, #fffbea 0%, #fef3c7 100%);
+      border-color: rgba(250,204,21,0.18);
+    }
+
+    .app.theme-green {
+      background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: rgba(34,197,94,0.16);
+    }
+
+    .app.theme-blue {
+      background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+      border-color: rgba(59,130,246,0.16);
+    }
+
+    .app.theme-purple {
+      background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%);
+      border-color: rgba(139,92,246,0.16);
+    }
+
+    .app.theme-brown {
+      background: linear-gradient(180deg, #faf5ef 0%, #f3e8dc 100%);
+      border-color: rgba(146,94,50,0.16);
+    }
+
+    .app.theme-pink {
+      background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 100%);
+      border-color: rgba(236,72,153,0.16);
+    }
+
+    .app.theme-gray {
+      background: linear-gradient(180deg, #f9fafb 0%, #e5e7eb 100%);
+      border-color: rgba(156,163,175,0.18);
+    }
+
+    .app.theme-choice {
+      background: linear-gradient(180deg, #fff8e7 0%, #fde68a 100%);
+      border-color: rgba(245,158,11,0.18);
+    }
+
+    .app.shuffle-mode {
       box-shadow: 0 20px 42px rgba(225,29,72,0.18);
-    }
-
-    .app.hard-mode::before {
-      background:
-        linear-gradient(180deg,
-          rgba(255,90,31,0.10) 0%,
-          rgba(225,29,72,0.10) 55%,
-          rgba(185,28,28,0.10) 100%);
     }
 
     .screen {
@@ -148,16 +179,9 @@
     }
 
     .topbar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      margin-bottom: 4px;
+      min-height: 42px;
       position: relative;
       z-index: 1;
-      text-align: center;
-      min-height: 48px;
     }
 
     .brand-logo {
@@ -233,7 +257,7 @@
     }
 
     .shuffle-hard-btn {
-      background: linear-gradient(180deg, var(--hard1) 0%, var(--hard2) 55%, var(--hard3) 100%);
+      background: linear-gradient(180deg, #ff5a1f 0%, #e11d48 55%, #b91c1c 100%);
       color: #ffffff;
       box-shadow: 0 10px 22px rgba(225,29,72,0.28);
     }
@@ -251,17 +275,19 @@
 
     .selector-wrap {
       width: 100%;
-      max-width: 320px;
-      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      margin-top: 6px;
     }
 
     .selector {
-      width: 100%;
+      width: 235px;
+      max-width: 100%;
       appearance: none;
       -webkit-appearance: none;
       border: 0;
-      border-radius: 18px;
-      padding: 16px 18px;
+      border-radius: 20px;
+      padding: 15px 18px;
       font-size: 18px;
       font-weight: 800;
       color: #172033;
@@ -323,13 +349,37 @@
       color: #2b1a00;
     }
 
+    .segmented-actions {
+      width: 260px;
+      max-width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(148,163,184,0.18);
+      margin-top: 14px;
+    }
+
+    .segment-btn {
+      min-width: 0;
+      border-radius: 0;
+      padding: 14px 12px;
+      font-size: 16px;
+      box-shadow: none;
+    }
+
+    .segment-left {
+      border-right: 1px solid rgba(255,255,255,0.5);
+    }
+
     .word-wrap {
       width: 100%;
       min-height: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 6px 0 6px;
+      padding: 0 6px;
     }
 
     .rainbow-word {
@@ -348,10 +398,6 @@
       font-weight: 800;
       color: #b91c1c;
       min-height: 20px;
-    }
-
-    .app.hard-mode .mode-label {
-      color: #9f1239;
     }
 
     .rainbow-stats-top {
@@ -429,7 +475,7 @@
       height: auto;
       border-radius: 22px;
       margin-top: 2px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.16);
+      box-shadow: var(--soft-shadow);
       background: transparent;
       padding: 0;
       border: 0;
@@ -445,6 +491,15 @@
         width: min(46vw, 130px);
         max-width: 130px;
         max-height: 130px;
+      }
+
+      .selector {
+        width: 220px;
+        font-size: 17px;
+      }
+
+      .segmented-actions {
+        width: 240px;
       }
 
       .result-text {
@@ -502,9 +557,9 @@
         </select>
       </div>
 
-      <div class="menu-buttons">
-        <button class="primary-btn" id="rainbowPickBtn" type="button">Continue</button>
-        <button class="neutral-btn" id="rainbowBackBtn" type="button">Home</button>
+      <div class="segmented-actions">
+        <button class="primary-btn segment-btn segment-left" id="rainbowPickBtn" type="button">Continue</button>
+        <button class="neutral-btn segment-btn" id="rainbowBackBtn" type="button">Home</button>
       </div>
     </div>
 
@@ -615,16 +670,16 @@
     };
 
     const colorThemes = {
-      Red: "red-theme",
-      Orange: "orange-theme",
-      Yellow: "yellow-theme",
-      Green: "green-theme",
-      Blue: "blue-theme",
-      Purple: "purple-theme",
-      Brown: "brown-theme",
-      Pink: "pink-theme",
-      Gray: "gray-theme",
-      "Your Choice": "choice-theme"
+      Red: { selector: "red-theme", app: "theme-red" },
+      Orange: { selector: "orange-theme", app: "theme-orange" },
+      Yellow: { selector: "yellow-theme", app: "theme-yellow" },
+      Green: { selector: "green-theme", app: "theme-green" },
+      Blue: { selector: "blue-theme", app: "theme-blue" },
+      Purple: { selector: "purple-theme", app: "theme-purple" },
+      Brown: { selector: "brown-theme", app: "theme-brown" },
+      Pink: { selector: "pink-theme", app: "theme-pink" },
+      Gray: { selector: "gray-theme", app: "theme-gray" },
+      "Your Choice": { selector: "choice-theme", app: "theme-choice" }
     };
 
     let currentMode = "home";
@@ -635,6 +690,7 @@
     let rainbowCorrectCountValue = 0;
     let rainbowMissedCountValue = 0;
     let rainbowPendingMissed = [];
+    let rainbowSeenWords = new Set();
 
     function shuffleArray(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -663,19 +719,38 @@
       celebrationSound.currentTime = 0;
     }
 
-    function setHardMode(isHard) {
-      if (isHard) {
-        app.classList.add("hard-mode");
-      } else {
-        app.classList.remove("hard-mode");
+    function clearAppThemes() {
+      app.classList.remove(
+        "theme-red",
+        "theme-orange",
+        "theme-yellow",
+        "theme-green",
+        "theme-blue",
+        "theme-purple",
+        "theme-brown",
+        "theme-pink",
+        "theme-gray",
+        "theme-choice",
+        "shuffle-mode"
+      );
+    }
+
+    function applyAppTheme(color, useShuffle = false) {
+      clearAppThemes();
+      const theme = colorThemes[color];
+      if (theme) {
+        app.classList.add(theme.app);
+      }
+      if (useShuffle) {
+        app.classList.add("shuffle-mode");
       }
     }
 
     function updateSelectorTheme() {
       rainbowListSelect.className = "selector";
-      const themeClass = colorThemes[rainbowListSelect.value];
-      if (themeClass) {
-        rainbowListSelect.classList.add(themeClass);
+      const theme = colorThemes[rainbowListSelect.value];
+      if (theme) {
+        rainbowListSelect.classList.add(theme.selector);
       }
     }
 
@@ -688,10 +763,14 @@
     }
 
     function updateHeader() {
-      if (currentMode === "home" || currentMode === "mode" || currentMode === "finish") {
-        setHardMode(false);
+      if (currentMode === "home") {
+        clearAppThemes();
+      } else if (currentMode === "mode") {
+        applyAppTheme(rainbowCurrentColor, false);
       } else if (currentMode === "game") {
-        setHardMode(rainbowShuffled);
+        applyAppTheme(rainbowCurrentColor, rainbowShuffled);
+      } else if (currentMode === "finish") {
+        applyAppTheme(rainbowCurrentColor, false);
       }
     }
 
@@ -711,6 +790,7 @@
       rainbowCorrectCountValue = 0;
       rainbowMissedCountValue = 0;
       rainbowPendingMissed = [];
+      rainbowSeenWords = new Set();
     }
 
     function updateRainbowStats() {
@@ -784,7 +864,10 @@
 
     function markRainbowMissed() {
       const currentWord = rainbowDeck[rainbowIndex];
-      rainbowMissedCountValue++;
+      if (!rainbowSeenWords.has(currentWord)) {
+        rainbowSeenWords.add(currentWord);
+        rainbowMissedCountValue++;
+      }
       rainbowPendingMissed.push(currentWord);
       goToNextRainbowWord();
     }
@@ -797,7 +880,7 @@
       rainbowCorrectCountValue = 0;
       rainbowMissedCountValue = 0;
       rainbowPendingMissed = [];
-      setHardMode(false);
+      rainbowSeenWords = new Set();
       showScreen("mode");
     }
 
