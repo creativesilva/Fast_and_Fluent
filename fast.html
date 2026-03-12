@@ -11,10 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="Fast & Fluent" />
   <meta name="theme-color" content="#f8fafc" />
 
-  <link rel="apple-touch-icon" href="fast_and_fluent_logo.png?v=1" />
-  <link rel="icon" type="image/png" sizes="192x192" href="fast_and_fluent_logo.png?v=1" />
-  <link rel="icon" type="image/png" sizes="512x512" href="fast_and_fluent_logo.png?v=1" />
-  <link rel="shortcut icon" href="fast_and_fluent_logo.png?v=1" />
+  <link rel="apple-touch-icon" href="fast_and_fluent_logo.png?v=2" />
+  <link rel="icon" type="image/png" sizes="192x192" href="fast_and_fluent_logo.png?v=2" />
+  <link rel="icon" type="image/png" sizes="512x512" href="fast_and_fluent_logo.png?v=2" />
+  <link rel="shortcut icon" href="fast_and_fluent_logo.png?v=2" />
 
   <title>Fast & Fluent</title>
 
@@ -25,11 +25,12 @@
       --text: #172033;
       --muted: #5f6b85;
       --green: #16a34a;
+      --green1: #79cc69;
+      --green2: #4aa84f;
       --hard1: #ff5a1f;
       --hard2: #e11d48;
       --hard3: #b91c1c;
       --shadow: 0 18px 40px rgba(0,0,0,0.12);
-      --soft-shadow: 0 12px 28px rgba(0,0,0,0.16);
     }
 
     * {
@@ -430,6 +431,11 @@
 
     .compact-buttons {
       margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
     }
 
     @media (max-width: 390px) {
@@ -517,7 +523,7 @@
       <div class="result-time" id="finishTime">Final Time: 00:00.0</div>
       <div class="result-text" id="finishText">You finished your practice.</div>
       <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration image" />
-      <div class="buttons compact-buttons" id="finishButtons"></div>
+      <div class="compact-buttons" id="finishButtons"></div>
     </div>
   </div>
 
@@ -613,11 +619,16 @@
       celebrationSound.currentTime = 0;
     }
 
-    function setHardMode(isHard) {
+    function setScreenTreatment() {
       app.classList.remove("hard-mode", "normal-play");
-      if (isHard) {
-        app.classList.add("hard-mode");
-      } else if (currentMode === "game") {
+
+      if (currentMode === "game") {
+        if (fastHardMode) {
+          app.classList.add("hard-mode");
+        } else {
+          app.classList.add("normal-play");
+        }
+      } else if (currentMode === "finish") {
         app.classList.add("normal-play");
       }
     }
@@ -627,6 +638,7 @@
       screens[screenKey].classList.add("active");
       currentMode = screenKey;
       updateHeader();
+      setScreenTreatment();
       window.scrollTo({ top: 0, behavior: "auto" });
     }
 
@@ -634,15 +646,12 @@
       if (currentMode === "home") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
-        app.classList.remove("hard-mode", "normal-play");
       } else if (currentMode === "game") {
         progressText.textContent = `Sentence ${fastIndex + 1} of ${fastDeck.length}`;
         timerText.classList.remove("hidden");
-        setHardMode(fastHardMode);
       } else {
         progressText.textContent = "";
         timerText.classList.add("hidden");
-        app.classList.remove("hard-mode", "normal-play");
       }
     }
 
@@ -685,6 +694,7 @@
       sentenceText.innerHTML = fastDeck[fastIndex];
       updateFastModeLabel();
       updateHeader();
+      setScreenTreatment();
     }
 
     function launchFastGame(shuffleFirst = false) {
@@ -699,16 +709,30 @@
       startFastTimer();
     }
 
-    function setFinishButtons(buttons) {
+    function buildFinishButtons() {
       finishButtons.innerHTML = "";
-      buttons.forEach(btn => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = btn.label;
-        button.className = btn.className;
-        button.addEventListener("click", btn.onClick);
-        finishButtons.appendChild(button);
+
+      const splitPill = document.createElement("div");
+      splitPill.className = "segmented-actions";
+
+      const homeBtn = document.createElement("button");
+      homeBtn.type = "button";
+      homeBtn.className = "neutral-btn segment-btn segment-left";
+      homeBtn.textContent = "Home";
+      homeBtn.addEventListener("click", () => {
+        stopCelebrationSound();
+        window.location.href = "index.html";
       });
+
+      const readAgainBtn = document.createElement("button");
+      readAgainBtn.type = "button";
+      readAgainBtn.className = "primary-btn segment-btn";
+      readAgainBtn.textContent = "Read Again";
+      readAgainBtn.addEventListener("click", () => resetFastGame());
+
+      splitPill.appendChild(homeBtn);
+      splitPill.appendChild(readAgainBtn);
+      finishButtons.appendChild(splitPill);
     }
 
     function advanceFastSentence() {
@@ -720,10 +744,7 @@
         finishTime.style.display = "block";
         finishText.textContent = "Write down your time, then read again and try to beat it.";
         celebrationImg.src = getRandomCelebrationImage();
-        setFinishButtons([
-          { label: "Read Again", className: "primary-btn", onClick: () => resetFastGame() },
-          { label: "Home", className: "neutral-btn", onClick: () => window.location.href = "index.html" }
-        ]);
+        buildFinishButtons();
         playCelebrationSound();
         showScreen("finish");
         return;
@@ -753,6 +774,7 @@
 
     celebrationImg.src = getRandomCelebrationImage();
     updateHeader();
+    setScreenTreatment();
   </script>
 </body>
 </html>
