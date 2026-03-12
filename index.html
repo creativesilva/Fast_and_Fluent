@@ -1,22 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-  >
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Rainbow Reader">
-  <meta name="theme-color" content="#f8fafc">
+  />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Rocket Book" />
+  <meta name="theme-color" content="#f8fafc" />
 
-  <link rel="apple-touch-icon" href="rainbow_reader_logo.png?v=4">
-  <link rel="icon" type="image/png" sizes="192x192" href="rainbow_reader_logo.png?v=4">
-  <link rel="icon" type="image/png" sizes="512x512" href="rainbow_reader_logo.png?v=4">
-  <link rel="shortcut icon" href="rainbow_reader_logo.png?v=4">
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=10" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=10" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rocket_book_logo.png?v=10" />
+  <link rel="shortcut icon" href="rocket_book_logo.png?v=10" />
 
-  <title>Rainbow Reader</title>
+  <title>Rocket Book</title>
 
   <style>
     :root {
@@ -25,8 +25,8 @@
       --text: #172033;
       --muted: #5f6b85;
       --green: #16a34a;
+      --yellow: #f59e0b;
       --shadow: 0 18px 40px rgba(0,0,0,0.12);
-      --soft-shadow: 0 12px 28px rgba(0,0,0,0.16);
     }
 
     * {
@@ -71,8 +71,7 @@
 
     .app,
     button,
-    img,
-    select {
+    img {
       touch-action: manipulation;
     }
 
@@ -86,11 +85,10 @@
       padding: 18px 18px 20px 18px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.85);
-      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .app::before {
@@ -108,80 +106,33 @@
           rgba(139,92,246,0.06) 100%);
     }
 
-    .app.theme-red {
-      background: linear-gradient(180deg, #fff1f2 0%, #ffe4e6 100%);
-      border-color: rgba(239,68,68,0.16);
-    }
-
-    .app.theme-orange {
-      background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
-      border-color: rgba(251,146,60,0.16);
-    }
-
-    .app.theme-yellow {
-      background: linear-gradient(180deg, #fffbea 0%, #fef3c7 100%);
-      border-color: rgba(250,204,21,0.18);
-    }
-
-    .app.theme-green {
-      background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-      border-color: rgba(34,197,94,0.16);
-    }
-
-    .app.theme-blue {
-      background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
-      border-color: rgba(59,130,246,0.16);
-    }
-
-    .app.theme-purple {
-      background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%);
-      border-color: rgba(139,92,246,0.16);
-    }
-
-    .app.theme-brown {
-      background: linear-gradient(180deg, #faf5ef 0%, #f3e8dc 100%);
-      border-color: rgba(146,94,50,0.16);
-    }
-
-    .app.theme-pink {
-      background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 100%);
-      border-color: rgba(236,72,153,0.16);
-    }
-
-    .app.theme-gray {
-      background: linear-gradient(180deg, #f9fafb 0%, #e5e7eb 100%);
-      border-color: rgba(156,163,175,0.18);
-    }
-
-    .app.theme-choice {
-      background: linear-gradient(180deg, #fff8e7 0%, #fde68a 100%);
-      border-color: rgba(245,158,11,0.18);
-    }
-
-    .app.shuffle-mode {
-      box-shadow: 0 20px 42px rgba(225,29,72,0.18);
-    }
-
     .screen {
-      flex: 1;
-      display: none;
+      position: relative;
+      z-index: 1;
+      display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       flex-direction: column;
       padding: 8px 4px 0 4px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .screen.active {
-      display: flex;
     }
 
     .topbar {
-      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 82px;
+      margin-bottom: 4px;
       position: relative;
       z-index: 1;
+      text-align: center;
+    }
+
+    .progress-text {
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #111827;
     }
 
     .brand-logo {
@@ -203,14 +154,6 @@
       color: var(--text);
     }
 
-    .subtitle {
-      font-size: clamp(19px, 4.8vw, 25px);
-      line-height: 1.2;
-      color: #374151;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
     .small-note {
       font-size: 15px;
       line-height: 1.38;
@@ -219,8 +162,14 @@
       margin-bottom: 12px;
     }
 
-    .menu-buttons,
-    .buttons {
+    .micro-note {
+      font-size: 12px;
+      line-height: 1.2;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .menu-buttons {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -256,260 +205,33 @@
       box-shadow: 0 10px 20px rgba(245,158,11,0.20);
     }
 
-    .shuffle-hard-btn {
-      background: linear-gradient(180deg, #ff5a1f 0%, #e11d48 55%, #b91c1c 100%);
-      color: #ffffff;
-      box-shadow: 0 10px 22px rgba(225,29,72,0.28);
-    }
-
-    .neutral-btn {
-      background: linear-gradient(180deg, #dbe2ea 0%, #c4ccd8 100%);
-      color: #1f2937;
-    }
-
-    .missed-btn {
-      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
-      color: #fff;
-      box-shadow: 0 10px 20px rgba(239,68,68,0.22);
-    }
-
-    .selector-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-top: 6px;
-    }
-
-    .selector {
-      width: 235px;
-      max-width: 100%;
-      appearance: none;
-      -webkit-appearance: none;
-      border: 0;
-      border-radius: 20px;
-      padding: 15px 18px;
-      font-size: 18px;
-      font-weight: 800;
-      color: #172033;
-      background: linear-gradient(180deg, #ffffff 0%, #edf2f7 100%);
-      box-shadow: 0 10px 20px rgba(148,163,184,0.18);
-      text-align: center;
-      text-align-last: center;
-      outline: none;
-      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .selector.red-theme {
-      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
-      color: #fff;
-    }
-
-    .selector.orange-theme {
-      background: linear-gradient(180deg, #fdba74 0%, #fb923c 100%);
-      color: #fff;
-    }
-
-    .selector.yellow-theme {
-      background: linear-gradient(180deg, #fde68a 0%, #facc15 100%);
-      color: #3b2f00;
-    }
-
-    .selector.green-theme {
-      background: linear-gradient(180deg, #86efac 0%, #22c55e 100%);
-      color: #fff;
-    }
-
-    .selector.blue-theme {
-      background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%);
-      color: #fff;
-    }
-
-    .selector.purple-theme {
-      background: linear-gradient(180deg, #c4b5fd 0%, #8b5cf6 100%);
-      color: #fff;
-    }
-
-    .selector.brown-theme {
-      background: linear-gradient(180deg, #c08457 0%, #8b5e3c 100%);
-      color: #fff;
-    }
-
-    .selector.pink-theme {
-      background: linear-gradient(180deg, #f9a8d4 0%, #ec4899 100%);
-      color: #fff;
-    }
-
-    .selector.gray-theme {
-      background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 100%);
-      color: #111827;
-    }
-
-    .selector.choice-theme {
-      background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
-      color: #2b1a00;
-    }
-
-    .segmented-actions {
-      width: 260px;
-      max-width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(148,163,184,0.18);
-      margin-top: 14px;
-    }
-
-    .segment-btn {
-      min-width: 0;
-      border-radius: 0;
-      padding: 14px 12px;
-      font-size: 16px;
-      box-shadow: none;
-    }
-
-    .segment-left {
-      border-right: 1px solid rgba(255,255,255,0.5);
-    }
-
-    .word-wrap {
-      width: 100%;
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 6px;
-    }
-
-    .rainbow-word {
-      font-size: clamp(58px, 15vw, 88px);
-      font-weight: 900;
-      line-height: 1;
-      max-width: 100%;
-      margin: 0 auto;
-      color: var(--text);
-      letter-spacing: -0.8px;
-    }
-
-    .mode-label {
-      margin-top: 4px;
-      font-size: 16px;
-      font-weight: 800;
-      color: #b91c1c;
-      min-height: 20px;
-    }
-
-    .rainbow-stats-top {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      width: 100%;
-      margin: 2px 0 0 0;
-      font-size: 18px;
-      font-weight: 900;
-      color: #1f2937;
-    }
-
-    .rainbow-stats-top .missed-text {
-      color: #dc2626;
-    }
-
-    .rainbow-stats-top .correct-text {
-      color: #16a34a;
-    }
-
-    .rainbow-button-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-      margin-top: 8px;
-      margin-bottom: 6px;
-    }
-
-    .rainbow-small-btn {
-      min-width: 132px;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 999px;
-    }
-
-    .rainbow-reset-wrap {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-top: 0;
-    }
-
-    .rainbow-reset-btn {
-      min-width: 132px;
-      padding: 12px 16px;
-      font-size: 16px;
-      border-radius: 999px;
-    }
-
-    .result-title {
-      font-size: clamp(30px, 8vw, 50px);
-      font-weight: 900;
-      margin-bottom: 8px;
-      line-height: 1.04;
-      color: var(--text);
-    }
-
-    .result-text {
-      font-size: 17px;
-      line-height: 1.32;
-      max-width: 310px;
-      margin: 0 auto 10px auto;
-      color: #243047;
-    }
-
-    .celebration-img {
-      width: min(46vw, 170px);
-      max-height: 170px;
-      object-fit: cover;
-      height: auto;
-      border-radius: 22px;
-      margin-top: 2px;
-      box-shadow: var(--soft-shadow);
-      background: transparent;
-      padding: 0;
-      border: 0;
-      display: block;
-    }
-
-    .compact-buttons {
-      margin-top: 12px;
-    }
-
     @media (max-width: 390px) {
       .brand-logo {
         width: min(46vw, 130px);
         max-width: 130px;
         max-height: 130px;
       }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="progress-text">Choose a Game</div>
+    </div>
 
-      .selector {
-        width: 220px;
-        font-size: 17px;
-      }
-
-      .segmented-actions {
-        width: 240px;
-      }
-
-      .result-text {
-        font-size: 16px;
-      }
-
-      .celebration-img {
-        width: min(50vw, 160px);
-        max-height: 160px;
-      }
-
-      .rainbow-word {
-        font-size: clamp(52px
+    <div class="screen">
+      <img src="rocket_book_logo.png" alt="Rocket Book logo" class="brand-logo" />
+      <div class="title">Rocket Book</div>
+      <div class="small-note">
+        Pick a reading game to begin.
+      </div>
+      <div class="menu-buttons">
+        <button class="primary-btn" onclick="window.location.href='fast.html'" type="button">Fast &amp; Fluent</button>
+        <button class="secondary-btn" onclick="window.location.href='rainbow.html'" type="button">Rainbow Reading</button>
+      </div>
+      <div class="micro-note">Designed by CreativeSilva</div>
+    </div>
+  </div>
+</body>
+</html>
