@@ -531,6 +531,10 @@
     <source src="celebration_sound.mp3" type="audio/mpeg" />
   </audio>
 
+  <audio id="fastMusic" preload="auto" loop>
+    <source src="fast_music.mp3" type="audio/mpeg" />
+  </audio>
+
   <script>
     const fastTitle = "Words With er, ir, ur, or";
 
@@ -553,6 +557,8 @@
       celebrationImages.push(`giphy-${i}.gif`);
     }
 
+    const SOUND_POOL_SIZE = 4;
+
     const app = document.getElementById("app");
     const progressText = document.getElementById("progressText");
     const timerText = document.getElementById("timerText");
@@ -565,6 +571,7 @@
     const celebrationImg = document.getElementById("celebrationImg");
     const finishButtons = document.getElementById("finishButtons");
     const celebrationSound = document.getElementById("celebrationSound");
+    const fastMusic = document.getElementById("fastMusic");
 
     const screens = {
       home: document.getElementById("fastHomeScreen"),
@@ -581,6 +588,36 @@
     let fastTimerInterval = null;
     let fastStartTime = null;
     let fastElapsedMs = 0;
+
+    if (fastMusic) {
+      fastMusic.volume = 0.18;
+    }
+    if (celebrationSound) {
+      celebrationSound.volume = 0.85;
+    }
+
+    function createSoundPool(src, volume, poolSize = SOUND_POOL_SIZE) {
+      const pool = [];
+      for (let i = 0; i < poolSize; i++) {
+        const audio = new Audio(src);
+        audio.preload = "auto";
+        audio.volume = volume;
+        pool.push(audio);
+      }
+      let index = 0;
+      return function playFromPool() {
+        const audio = pool[index];
+        index = (index + 1) % pool.length;
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+          audio.volume = volume;
+          audio.play().catch(() => {});
+        } catch (error) {}
+      };
+    }
+
+    const playCorrectSound = createSoundPool("correct.mp3", 0.65, 4);
 
     function shuffleArray(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -619,6 +656,18 @@
       celebrationSound.currentTime = 0;
     }
 
+    function playFastMusic() {
+      if (!fastMusic) return;
+      if (!fastMusic.paused) return;
+      fastMusic.play().catch(() => {});
+    }
+
+    function stopFastMusic() {
+      if (!fastMusic) return;
+      fastMusic.pause();
+      fastMusic.currentTime = 0;
+    }
+
     function setScreenTreatment() {
       app.classList.remove("hard-mode", "normal-play");
 
@@ -646,12 +695,15 @@
       if (currentMode === "home") {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        stopFastMusic();
       } else if (currentMode === "game") {
         progressText.textContent = `Sentence ${fastIndex + 1} of ${fastDeck.length}`;
         timerText.classList.remove("hidden");
+        playFastMusic();
       } else {
         progressText.textContent = "";
         timerText.classList.add("hidden");
+        stopFastMusic();
       }
     }
 
@@ -721,6 +773,7 @@
       homeBtn.textContent = "Home";
       homeBtn.addEventListener("click", () => {
         stopCelebrationSound();
+        stopFastMusic();
         window.location.href = "index.html";
       });
 
@@ -736,6 +789,7 @@
     }
 
     function advanceFastSentence() {
+      playCorrectSound();
       fastIndex++;
       if (fastIndex >= fastDeck.length) {
         stopFastTimer();
@@ -754,6 +808,7 @@
 
     function resetFastGame() {
       stopCelebrationSound();
+      stopFastMusic();
       clearInterval(fastTimerInterval);
       fastTimerInterval = null;
       fastStartTime = null;
@@ -768,7 +823,11 @@
 
     document.getElementById("fastStartBtn").addEventListener("click", () => launchFastGame(false));
     document.getElementById("fastShuffleBtn").addEventListener("click", () => launchFastGame(true));
-    document.getElementById("fastBackBtn").addEventListener("click", () => window.location.href = "index.html");
+    document.getElementById("fastBackBtn").addEventListener("click", () => {
+      stopCelebrationSound();
+      stopFastMusic();
+      window.location.href = "index.html";
+    });
     document.getElementById("fastDoneBtn").addEventListener("click", advanceFastSentence);
     document.getElementById("fastResetBtn").addEventListener("click", resetFastGame);
 
