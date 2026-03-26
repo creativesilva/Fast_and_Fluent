@@ -68,7 +68,7 @@
 
     .app {
       width: min(100%, 430px);
-      min-height: min(86vh, 800px); min-height: min(86dvh, 800px);
+      min-height: 0; max-height: min(96dvh, 800px); height: min(96dvh, 800px);
       background: rgba(255,255,255,0.92);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-radius: 32px;
@@ -105,13 +105,13 @@
     }
 
     .game-icon {
-      font-size: 56px; line-height: 1; margin-bottom: 10px;
+      font-size: 40px; line-height: 1; margin-bottom: 6px;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,0.10));
     }
 
     .title {
-      font-size: clamp(30px, 7.5vw, 44px); font-weight: 900; line-height: 1.06;
-      margin-bottom: 6px; letter-spacing: -0.4px; color: var(--text);
+      font-size: clamp(26px, 6.5vw, 38px); font-weight: 900; line-height: 1.06;
+      margin-bottom: 4px; letter-spacing: -0.4px; color: var(--text);
     }
 
     .subtitle {
@@ -120,8 +120,8 @@
     }
 
     .small-note {
-      font-size: 15px; line-height: 1.4; color: var(--muted);
-      max-width: 310px; margin-bottom: 14px;
+      font-size: 14px; line-height: 1.35; color: var(--muted);
+      max-width: 300px; margin-bottom: 8px;
     }
 
     /* ---- Buttons ---- */
@@ -163,20 +163,20 @@
     /* ---- Menu Grid ---- */
     .menu-grid {
       width: 100%; max-width: 320px; display: flex; flex-direction: column;
-      gap: 12px; margin-top: 8px;
+      gap: 8px; margin-top: 6px;
     }
 
     .menu-tile {
-      width: 100%; border-radius: 20px; padding: 18px 16px;
-      display: flex; align-items: center; gap: 14px; text-align: left;
+      width: 100%; border-radius: 18px; padding: 14px 14px;
+      display: flex; align-items: center; gap: 12px; text-align: left;
       min-width: 0; font-size: 16px;
       border: 1px solid rgba(255,255,255,0.3);
     }
 
-    .menu-tile .tile-icon { font-size: 32px; flex-shrink: 0; }
-    .menu-tile .tile-info { display: flex; flex-direction: column; gap: 2px; }
-    .menu-tile .tile-title { font-size: 17px; font-weight: 800; }
-    .menu-tile .tile-desc { font-size: 13px; font-weight: 600; opacity: 0.8; }
+    .menu-tile .tile-icon { font-size: 28px; flex-shrink: 0; }
+    .menu-tile .tile-info { display: flex; flex-direction: column; gap: 1px; }
+    .menu-tile .tile-title { font-size: 16px; font-weight: 800; }
+    .menu-tile .tile-desc { font-size: 12px; font-weight: 600; opacity: 0.8; }
 
     /* ---- Game Card ---- */
     .game-card {

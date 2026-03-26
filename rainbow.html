@@ -189,11 +189,11 @@
     }
 
     .brand-logo {
-      width: min(44vw, 145px);
-      max-width: 145px;
-      max-height: 145px;
+      width: min(32vw, 100px);
+      max-width: 100px;
+      max-height: 100px;
       height: auto;
-      margin: 0 0 12px 0;
+      margin: 0 0 8px 0;
       object-fit: contain;
       filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
     }
@@ -394,7 +394,7 @@
 
     .word-wrap {
       width: 100%;
-      min-height: 120px;
+      min-height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -503,8 +503,8 @@
     }
 
     .celebration-img {
-      width: min(46vw, 170px);
-      max-height: 170px;
+      width: min(36vw, 130px);
+      max-height: 130px;
       object-fit: cover;
       height: auto;
       border-radius: 22px;
@@ -857,7 +857,7 @@
       };
     }
 
-    const playCorrectSound = createSoundPool("correct.mp3", 0.65, 4);
+    const playCorrectSound = createSoundPool("chime.wav", 0.8, 4);
     const playMissedSound = createSoundPool("quack.mp3", 0.5, 4);
 
     function shuffleArray(arr) {
