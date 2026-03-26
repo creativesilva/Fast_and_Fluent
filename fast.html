@@ -50,7 +50,7 @@
     }
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
       color: var(--text);
       min-height: 100vh;
       min-height: 100dvh;
@@ -83,10 +83,12 @@
       width: min(100%, 430px);
       min-height: min(86vh, 800px);
       min-height: min(86dvh, 800px);
-      background: rgba(255,255,255,0.95);
-      border-radius: 30px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
       box-shadow: var(--shadow);
-      padding: 18px 18px 20px 18px;
+      padding: 20px 20px 24px 20px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -491,7 +493,7 @@
     <div class="screen active" id="fastHomeScreen">
       <img src="fast_and_fluent_logo.png" alt="Fast and Fluent logo" class="brand-logo" />
       <div class="title">Fast &amp; Fluent</div>
-      <div class="subtitle" id="fastHomeTitle">Words With er, ir, ur, or</div>
+      <div class="subtitle" id="fastHomeTitle">Words With or, oar, ore</div>
       <div class="small-note">
         Read each sentence out loud. Tap Start to go in order, or tap Shuffle for Ultra Super Duper Hard Mode.
       </div>
@@ -536,19 +538,19 @@
   </audio>
 
   <script>
-    const fastTitle = "Words With er, ir, ur, or";
+    const fastTitle = "Words With or, oar, ore";
 
     const fastSentences = [
-      "What is <u>her</u> name?",
-      "The <u>bird</u> was chirping.",
-      "Let's brush the dog's <u>fur</u>.",
-      "I need to water the <u>fern</u>.",
-      "Do get in the <u>dirt</u>.",
-      "I need to <u>work</u> in the garden.",
-      "He will close the <u>barn</u> door.",
-      "She broke her <u>arm</u>.",
-      "I will <u>climb</u> to the top.",
-      "Look <u>through</u> the window."
+      "I was <u>born</u> in Utah.",
+      "She likes <u>corn</u> on the cob.",
+      "Throw away the apple <u>core</u>.",
+      "Do you want <u>more</u> to eat?",
+      "The lion has a loud <u>roar</u>.",
+      "Watch the bird <u>soar</u> in the sky.",
+      "<u>Her</u> name is Daisy.",
+      "Plant your seeds in the <u>dirt</u>.",
+      "Let's <u>learn</u> to read!",
+      "I <u>sure</u> do like you!"
     ];
 
     const maxCelebrationNumber = 40;

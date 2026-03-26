@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Brain Games" />
+  <meta name="theme-color" content="#f0fdf4" />
+
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=10" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=10" />
+  <link rel="shortcut icon" href="rocket_book_logo.png?v=10" />
+
+  <title>Brain Games</title>
+
+  <style>
+    :root {
+      --bg1: #f0fdf4;
+      --bg2: #ecfdf5;
+      --text: #172033;
+      --muted: #5f6b85;
+      --teal: #14b8a6;
+      --teal-dark: #0d9488;
+      --green: #22c55e;
+      --green-dark: #16a34a;
+      --blue: #3b82f6;
+      --blue-dark: #2563eb;
+      --purple: #8b5cf6;
+      --purple-dark: #7c3aed;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --shadow: 0 18px 40px rgba(0,0,0,0.12);
+      --soft-shadow: 0 12px 28px rgba(0,0,0,0.14);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      width: 100%; min-height: 100%; margin: 0; padding: 0;
+      overflow-x: hidden; overflow-y: auto; touch-action: pan-y;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+      color: var(--text);
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding-top: max(14px, env(safe-area-inset-top));
+      padding-right: max(14px, env(safe-area-inset-right));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      padding-left: max(14px, env(safe-area-inset-left));
+      user-select: none; -webkit-user-select: none;
+      -webkit-text-size-adjust: 100%;
+      overscroll-behavior-y: contain;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(20,184,166,0.18), transparent 30%),
+        radial-gradient(circle at 80% 10%, rgba(59,130,246,0.15), transparent 28%),
+        radial-gradient(circle at 15% 85%, rgba(139,92,246,0.14), transparent 26%),
+        radial-gradient(circle at 85% 80%, rgba(34,197,94,0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+    }
+
+    .app, button, img { touch-action: manipulation; }
+
+    .app {
+      width: min(100%, 430px);
+      min-height: min(86vh, 800px); min-height: min(86dvh, 800px);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 20px 20px 24px 20px;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .app::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(20,184,166,0.06), transparent 40%),
+        radial-gradient(circle at 70% 75%, rgba(59,130,246,0.05), transparent 40%);
+    }
+
+    .screen {
+      flex: 1; display: none; align-items: center; justify-content: center;
+      text-align: center; flex-direction: column; padding: 8px 4px 0 4px;
+      position: relative; z-index: 1;
+    }
+    .screen.active { display: flex; }
+
+    .topbar {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; margin-bottom: 4px; position: relative; z-index: 1; text-align: center;
+      min-height: 36px;
+    }
+
+    .progress-text {
+      font-size: 16px; font-weight: 800; line-height: 1.1; color: var(--teal-dark);
+    }
+
+    .game-icon {
+      font-size: 56px; line-height: 1; margin-bottom: 10px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.10));
+    }
+
+    .title {
+      font-size: clamp(30px, 7.5vw, 44px); font-weight: 900; line-height: 1.06;
+      margin-bottom: 6px; letter-spacing: -0.4px; color: var(--text);
+    }
+
+    .subtitle {
+      font-size: clamp(17px, 4.2vw, 22px); line-height: 1.2;
+      color: #0f766e; margin-bottom: 4px; font-weight: 700;
+    }
+
+    .small-note {
+      font-size: 15px; line-height: 1.4; color: var(--muted);
+      max-width: 310px; margin-bottom: 14px;
+    }
+
+    /* ---- Buttons ---- */
+    button {
+      border: 0; border-radius: 18px; padding: 15px 20px; font-size: 17px;
+      font-weight: 800; cursor: pointer; min-width: 120px;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+    }
+    button:active { transform: scale(0.97); }
+
+    .teal-btn {
+      background: linear-gradient(180deg, #2dd4bf 0%, #14b8a6 100%);
+      color: #fff; box-shadow: 0 10px 20px rgba(20,184,166,0.25);
+    }
+    .blue-btn {
+      background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+      color: #fff; box-shadow: 0 10px 20px rgba(59,130,246,0.25);
+    }
+    .purple-btn {
+      background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+      color: #fff; box-shadow: 0 10px 20px rgba(139,92,246,0.22);
+    }
+    .green-btn {
+      background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+      color: #fff; box-shadow: 0 10px 20px rgba(34,197,94,0.25);
+    }
+    .red-btn {
+      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+      color: #fff; box-shadow: 0 10px 20px rgba(239,68,68,0.22);
+    }
+    .neutral-btn {
+      background: linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%); color: #1f2937;
+    }
+    .amber-btn {
+      background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+      color: #78350f; box-shadow: 0 10px 20px rgba(245,158,11,0.22);
+    }
+
+    /* ---- Menu Grid ---- */
+    .menu-grid {
+      width: 100%; max-width: 320px; display: flex; flex-direction: column;
+      gap: 12px; margin-top: 8px;
+    }
+
+    .menu-tile {
+      width: 100%; border-radius: 20px; padding: 18px 16px;
+      display: flex; align-items: center; gap: 14px; text-align: left;
+      min-width: 0; font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .menu-tile .tile-icon { font-size: 32px; flex-shrink: 0; }
+    .menu-tile .tile-info { display: flex; flex-direction: column; gap: 2px; }
+    .menu-tile .tile-title { font-size: 17px; font-weight: 800; }
+    .menu-tile .tile-desc { font-size: 13px; font-weight: 600; opacity: 0.8; }
+
+    /* ---- Game Card ---- */
+    .game-card {
+      width: 100%; max-width: 340px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px; padding: 24px 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.5);
+      margin: 8px auto;
+    }
+
+    .game-word {
+      font-size: clamp(34px, 9vw, 52px); font-weight: 900; line-height: 1.1;
+      color: var(--text); margin-bottom: 8px;
+    }
+
+    .game-definition {
+      font-size: 18px; font-weight: 600; line-height: 1.35; color: #374151;
+      font-style: italic; margin-bottom: 4px;
+    }
+
+    /* ---- Choice Buttons ---- */
+    .choices {
+      width: 100%; max-width: 320px; display: flex; flex-direction: column;
+      gap: 10px; margin-top: 12px;
+    }
+
+    .choice-btn {
+      width: 100%; border-radius: 16px; padding: 16px 18px; font-size: 18px;
+      font-weight: 700; text-align: center; min-width: 0;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      color: var(--text);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 2px solid rgba(0,0,0,0.06);
+      transition: transform 0.1s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+    .choice-btn:active { transform: scale(0.97); }
+
+    .choice-btn.correct-flash {
+      background: linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
+      border-color: #22c55e; color: #166534;
+    }
+    .choice-btn.incorrect-flash {
+      background: linear-gradient(180deg, #fecaca 0%, #fca5a5 100%);
+      border-color: #ef4444; color: #991b1b;
+    }
+
+    /* ---- HF Word Display ---- */
+    .hf-word {
+      font-size: clamp(52px, 14vw, 80px); font-weight: 900; line-height: 1;
+      color: var(--text); margin: 0 auto;
+    }
+
+    .hf-zone {
+      width: 100%; min-height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 10px;
+    }
+
+    /* ---- Speaker (for HF words) ---- */
+    .mini-speaker {
+      width: 56px; height: 56px; border-radius: 50%; border: none;
+      background: linear-gradient(145deg, #2dd4bf 0%, #14b8a6 100%);
+      box-shadow: 0 6px 16px rgba(20,184,166,0.3);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      min-width: 0; padding: 0;
+      transition: transform 0.12s ease;
+    }
+    .mini-speaker:active { transform: scale(0.92); }
+    .mini-speaker svg { width: 28px; height: 28px; fill: white; }
+    .mini-speaker.speaking { animation: miniPulse 0.5s ease-in-out infinite; }
+
+    @keyframes miniPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    /* ---- Segmented ---- */
+    .segmented-actions {
+      width: 280px; max-width: 100%; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 0; border-radius: 22px;
+      overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+      margin-top: 14px;
+    }
+    .segment-btn { min-width: 0; border-radius: 0; padding: 16px 14px; font-size: 17px; box-shadow: none; }
+    .segment-left { border-right: 1px solid rgba(255,255,255,0.4); }
+
+    .single-btn-wrap { width: 100%; display: flex; justify-content: center; margin-top: 10px; }
+    .single-btn { width: 200px; max-width: 100%; min-width: 0; }
+
+    /* ---- Stats bar ---- */
+    .stats-bar {
+      display: flex; justify-content: center; align-items: center;
+      gap: 16px; flex-wrap: wrap; width: 100%;
+      font-size: 17px; font-weight: 800; margin: 4px 0;
+    }
+    .stats-bar .correct-text { color: var(--green-dark); }
+    .stats-bar .missed-text { color: var(--red); }
+
+    /* ---- Results ---- */
+    .result-title {
+      font-size: clamp(28px, 7.5vw, 44px); font-weight: 900;
+      margin-bottom: 6px; line-height: 1.06; color: var(--text);
+    }
+    .result-stats { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--teal-dark); }
+    .result-text { font-size: 16px; line-height: 1.35; max-width: 300px; margin: 0 auto 12px auto; color: #374151; }
+
+    .celebration-img {
+      width: min(42vw, 150px); max-height: 150px; object-fit: cover;
+      height: auto; border-radius: 22px; margin-top: 4px;
+      box-shadow: var(--soft-shadow); display: block;
+    }
+
+    .compact-buttons {
+      margin-top: 14px; width: 100%; display: flex; flex-direction: column;
+      align-items: center; gap: 12px;
+    }
+
+    /* ---- Essential Question ---- */
+    .eq-card {
+      width: 100%; max-width: 340px;
+      background: linear-gradient(135deg, rgba(20,184,166,0.08) 0%, rgba(59,130,246,0.08) 100%);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px; padding: 28px 20px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+      border: 1px solid rgba(20,184,166,0.15);
+      margin: 12px auto;
+    }
+
+    .eq-label {
+      font-size: 13px; font-weight: 800; color: var(--teal-dark);
+      text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px;
+    }
+
+    .eq-question {
+      font-size: clamp(22px, 5.5vw, 30px); font-weight: 900; line-height: 1.2;
+      color: var(--text);
+    }
+
+    .eq-hint {
+      font-size: 15px; line-height: 1.4; color: var(--muted); margin-top: 12px;
+    }
+
+    /* ---- Confetti ---- */
+    .confetti-container {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9999; overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute; width: 10px; height: 10px; top: -10px; border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+    }
+
+    @media (max-width: 390px) {
+      .menu-tile { padding: 14px 12px; gap: 12px; }
+      .menu-tile .tile-icon { font-size: 28px; }
+      .game-word { font-size: clamp(30px, 8vw, 44px); }
+      .segmented-actions { width: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="topbar">
+      <div class="progress-text" id="progressText"></div>
+    </div>
+
+    <!-- ===== MENU SCREEN ===== -->
+    <div class="screen active" id="menuScreen">
+      <div class="game-icon">&#x1F9E0;</div>
+      <div class="title">Brain Games</div>
+      <div class="subtitle">Unit 5 Week 3</div>
+      <div class="small-note">Pick a game to practice your words and build your brain power!</div>
+
+      <div class="menu-grid">
+        <button class="menu-tile blue-btn" id="menuHF" type="button">
+          <span class="tile-icon">&#x26A1;</span>
+          <span class="tile-info">
+            <span class="tile-title">High Frequency Words</span>
+            <span class="tile-desc">Practice sight words fast</span>
+          </span>
+        </button>
+
+        <button class="menu-tile purple-btn" id="menuVocab" type="button">
+          <span class="tile-icon">&#x1F4D6;</span>
+          <span class="tile-info">
+            <span class="tile-title">Vocabulary Match</span>
+            <span class="tile-desc">Match words to meanings</span>
+          </span>
+        </button>
+
+        <button class="menu-tile teal-btn" id="menuOral" type="button">
+          <span class="tile-icon">&#x1F4AC;</span>
+          <span class="tile-info">
+            <span class="tile-title">Oral Vocabulary</span>
+            <span class="tile-desc">Learn bigger words</span>
+          </span>
+        </button>
+
+        <button class="menu-tile amber-btn" id="menuEQ" type="button">
+          <span class="tile-icon">&#x1F4A1;</span>
+          <span class="tile-info">
+            <span class="tile-title">Essential Question</span>
+            <span class="tile-desc">Think and discuss</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="single-btn-wrap" style="margin-top:16px;">
+        <button class="neutral-btn single-btn" id="menuHomeBtn" type="button">Home</button>
+      </div>
+    </div>
+
+    <!-- ===== HIGH FREQUENCY WORDS GAME ===== -->
+    <div class="screen" id="hfGameScreen">
+      <div class="hf-zone">
+        <div class="hf-word" id="hfWord"></div>
+      </div>
+
+      <button class="mini-speaker" id="hfSpeaker" type="button" aria-label="Hear the word">
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </button>
+
+      <div class="stats-bar" id="hfStats">
+        <span id="hfProgress">1 of 5</span>
+        <span class="correct-text" id="hfCorrect">Correct: 0</span>
+        <span class="missed-text" id="hfMissed">Missed: 0</span>
+      </div>
+
+      <div class="segmented-actions">
+        <button class="red-btn segment-btn segment-left" id="hfMissedBtn" type="button">Missed</button>
+        <button class="green-btn segment-btn" id="hfCorrectBtn" type="button">Correct</button>
+      </div>
+
+      <div class="single-btn-wrap">
+        <button class="neutral-btn" id="hfResetBtn" type="button" style="width:160px;">Back</button>
+      </div>
+    </div>
+
+    <!-- ===== VOCABULARY MATCH GAME ===== -->
+    <div class="screen" id="vocabGameScreen">
+      <div class="game-icon" style="font-size:44px;">&#x1F4D6;</div>
+      <div class="subtitle" id="vocabPrompt">What does this word mean?</div>
+
+      <div class="game-card">
+        <div class="game-word" id="vocabWord"></div>
+      </div>
+
+      <div class="choices" id="vocabChoices"></div>
+
+      <div class="single-btn-wrap" style="margin-top:16px;">
+        <button class="neutral-btn" id="vocabBackBtn" type="button" style="width:160px;">Back</button>
+      </div>
+    </div>
+
+    <!-- ===== ORAL VOCABULARY GAME ===== -->
+    <div class="screen" id="oralGameScreen">
+      <div class="game-icon" style="font-size:44px;">&#x1F4AC;</div>
+      <div class="subtitle" id="oralPrompt">Which word matches?</div>
+
+      <div class="game-card">
+        <div class="game-definition" id="oralDefinition"></div>
+      </div>
+
+      <div class="choices" id="oralChoices"></div>
+
+      <div class="single-btn-wrap" style="margin-top:16px;">
+        <button class="neutral-btn" id="oralBackBtn" type="button" style="width:160px;">Back</button>
+      </div>
+    </div>
+
+    <!-- ===== ESSENTIAL QUESTION SCREEN ===== -->
+    <div class="screen" id="eqScreen">
+      <div class="game-icon" style="font-size:52px;">&#x1F4A1;</div>
+
+      <div class="eq-card">
+        <div class="eq-label">Essential Question</div>
+        <div class="eq-question">What inventions do you know about?</div>
+        <div class="eq-hint">
+          Talk with a grown-up about inventions you use every day.
+          Think about things like phones, cars, lights, and computers.
+          What makes an invention important?
+        </div>
+      </div>
+
+      <div class="small-note" style="margin-top:12px;">
+        Discuss this question with your family. There are no wrong answers!
+      </div>
+
+      <div class="single-btn-wrap">
+        <button class="neutral-btn single-btn" id="eqBackBtn" type="button">Back to Games</button>
+      </div>
+    </div>
+
+    <!-- ===== FINISH SCREEN ===== -->
+    <div class="screen" id="finishScreen">
+      <div class="game-icon" style="font-size:52px; animation:none;">&#x1F389;</div>
+      <div class="result-title" id="finishTitle">Great Job!</div>
+      <div class="result-stats" id="finishStats"></div>
+      <div class="result-text" id="finishText"></div>
+      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration" />
+      <div class="compact-buttons" id="finishButtons"></div>
+    </div>
+  </div>
+
+  <audio id="celebrationSound" preload="auto">
+    <source src="celebration_sound.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    /* ==============================
+       DATA
+    ============================== */
+    const hfWords = ["better", "guess", "learn", "right", "sure"];
+
+    const vocabData = [
+      {
+        word: "idea",
+        definition: "a picture or thought you get in your mind",
+        wrong: ["a type of food you eat for lunch", "a game you play outside"]
+      },
+      {
+        word: "unusual",
+        definition: "not common",
+        wrong: ["very big and tall", "something you do every day"]
+      }
+    ];
+
+    const oralVocabData = [
+      { word: "began", definition: "started to do something" },
+      { word: "curious", definition: "wanting to know or learn more" },
+      { word: "improve", definition: "to make something better" },
+      { word: "complicated", definition: "hard to understand, not simple" },
+      { word: "device", definition: "a tool or machine made for a purpose" },
+      { word: "imagine", definition: "to make a picture in your mind" }
+    ];
+
+    const maxCelebrationNumber = 40;
+    const celebrationImages = ["giphy.gif"];
+    for (let i = 1; i <= maxCelebrationNumber; i++) celebrationImages.push(`giphy-${i}.gif`);
+
+    /* ==============================
+       ELEMENTS
+    ============================== */
+    const app = document.getElementById("app");
+    const progressText = document.getElementById("progressText");
+    const celebrationSound = document.getElementById("celebrationSound");
+    const celebrationImg = document.getElementById("celebrationImg");
+
+    const screens = {
+      menu: document.getElementById("menuScreen"),
+      hf: document.getElementById("hfGameScreen"),
+      vocab: document.getElementById("vocabGameScreen"),
+      oral: document.getElementById("oralGameScreen"),
+      eq: document.getElementById("eqScreen"),
+      finish: document.getElementById("finishScreen")
+    };
+
+    if (celebrationSound) celebrationSound.volume = 0.85;
+
+    /* ==============================
+       TTS
+    ============================== */
+    let ttsVoice = null;
+
+    function initTTS() {
+      if (!window.speechSynthesis) return;
+      function pick() {
+        const voices = speechSynthesis.getVoices();
+        if (!voices.length) return;
+        const preferred = ["Samantha","Karen","Daniel","Alex","Google US English"];
+        for (const name of preferred) {
+          const f = voices.find(v => v.name.includes(name) && v.lang.startsWith("en"));
+          if (f) { ttsVoice = f; break; }
+        }
+        if (!ttsVoice) ttsVoice = voices.find(v => v.lang.startsWith("en")) || voices[0];
+      }
+      pick();
+      speechSynthesis.addEventListener("voiceschanged", pick);
+    }
+
+    function speak(text, btn) {
+      if (!window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.85; u.pitch = 1.05; u.volume = 1;
+      if (ttsVoice) u.voice = ttsVoice;
+      if (btn) {
+        btn.classList.add("speaking");
+        u.onend = () => btn.classList.remove("speaking");
+        u.onerror = () => btn.classList.remove("speaking");
+      }
+      speechSynthesis.speak(u);
+    }
+
+    initTTS();
+
+    /* ==============================
+       HELPERS
+    ============================== */
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function randomCelebImg() {
+      return celebrationImages[Math.floor(Math.random() * celebrationImages.length)];
+    }
+
+    function playCelebration() {
+      if (celebrationSound) { celebrationSound.currentTime = 0; celebrationSound.play().catch(() => {}); }
+    }
+    function stopCelebration() {
+      if (celebrationSound) { celebrationSound.pause(); celebrationSound.currentTime = 0; }
+    }
+
+    function launchConfetti() {
+      const c = document.createElement("div"); c.className = "confetti-container";
+      document.body.appendChild(c);
+      const colors = ["#14b8a6","#3b82f6","#8b5cf6","#22c55e","#f59e0b","#ec4899","#ef4444","#fbbf24"];
+      for (let i = 0; i < 50; i++) {
+        const p = document.createElement("div"); p.className = "confetti-piece";
+        p.style.left = Math.random()*100+"%";
+        p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDuration = (2+Math.random()*2)+"s";
+        p.style.animationDelay = (Math.random()*0.8)+"s";
+        p.style.width = (6+Math.random()*8)+"px";
+        p.style.height = (6+Math.random()*8)+"px";
+        p.style.borderRadius = Math.random()>0.5?"50%":"2px";
+        c.appendChild(p);
+      }
+      setTimeout(() => c.remove(), 5000);
+    }
+
+    /* ==============================
+       SCREEN NAV
+    ============================== */
+    let currentGame = "menu";
+
+    function showScreen(key) {
+      Object.values(screens).forEach(s => s.classList.remove("active"));
+      screens[key].classList.add("active");
+      currentGame = key;
+      if (key === "menu" || key === "eq") progressText.textContent = "";
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
+    /* ==============================
+       HIGH FREQUENCY WORDS
+    ============================== */
+    let hfDeck = [], hfIndex = 0, hfCorrectVal = 0, hfMissedVal = 0;
+    let hfPendingRetry = [], hfSeenWords = new Set();
+
+    const hfWord = document.getElementById("hfWord");
+    const hfSpeaker = document.getElementById("hfSpeaker");
+    const hfProgressEl = document.getElementById("hfProgress");
+    const hfCorrectEl = document.getElementById("hfCorrect");
+    const hfMissedEl = document.getElementById("hfMissed");
+
+    function startHF() {
+      stopCelebration();
+      hfDeck = shuffle(hfWords);
+      hfIndex = 0; hfCorrectVal = 0; hfMissedVal = 0;
+      hfPendingRetry = []; hfSeenWords = new Set();
+      showScreen("hf");
+      showHFWord();
+    }
+
+    function showHFWord() {
+      hfWord.textContent = hfDeck[hfIndex];
+      hfProgressEl.textContent = `${hfCorrectVal} of ${hfWords.length}`;
+      hfCorrectEl.textContent = `Correct: ${hfCorrectVal}`;
+      hfMissedEl.textContent = `Missed: ${hfMissedVal}`;
+      progressText.textContent = `High Frequency Words`;
+      setTimeout(() => speak(hfDeck[hfIndex], hfSpeaker), 300);
+    }
+
+    function advanceHF() {
+      hfIndex++;
+      if (hfIndex >= hfDeck.length) {
+        if (hfPendingRetry.length > 0) {
+          hfDeck = shuffle(hfPendingRetry);
+          hfPendingRetry = [];
+          hfIndex = 0;
+        } else {
+          finishGame("hf", hfCorrectVal, hfWords.length, "High Frequency Words");
+          return;
+        }
+      }
+      showHFWord();
+    }
+
+    document.getElementById("hfCorrectBtn").addEventListener("click", () => {
+      const w = hfDeck[hfIndex];
+      if (!hfSeenWords.has(w)) { hfSeenWords.add(w); hfCorrectVal++; }
+      advanceHF();
+    });
+
+    document.getElementById("hfMissedBtn").addEventListener("click", () => {
+      const w = hfDeck[hfIndex];
+      if (!hfSeenWords.has(w)) { hfSeenWords.add(w); hfMissedVal++; }
+      hfPendingRetry.push(w);
+      advanceHF();
+    });
+
+    hfSpeaker.addEventListener("click", () => {
+      if (hfDeck.length && hfIndex < hfDeck.length) speak(hfDeck[hfIndex], hfSpeaker);
+    });
+
+    document.getElementById("hfResetBtn").addEventListener("click", () => {
+      speechSynthesis.cancel(); showScreen("menu");
+    });
+
+    /* ==============================
+       VOCABULARY MATCH
+    ============================== */
+    let vocabDeck = [], vocabIndex = 0, vocabScore = 0, vocabLocked = false;
+
+    const vocabWord = document.getElementById("vocabWord");
+    const vocabChoices = document.getElementById("vocabChoices");
+
+    function startVocab() {
+      stopCelebration();
+      vocabDeck = shuffle(vocabData);
+      vocabIndex = 0; vocabScore = 0; vocabLocked = false;
+      showScreen("vocab");
+      showVocabQuestion();
+    }
+
+    function showVocabQuestion() {
+      const item = vocabDeck[vocabIndex];
+      vocabWord.textContent = item.word;
+      progressText.textContent = `Vocabulary ${vocabIndex + 1} of ${vocabDeck.length}`;
+      vocabLocked = false;
+
+      // Build choices: correct + wrong answers, shuffled
+      const allChoices = shuffle([
+        { text: item.definition, correct: true },
+        ...item.wrong.map(w => ({ text: w, correct: false }))
+      ]);
+
+      vocabChoices.innerHTML = "";
+      allChoices.forEach(ch => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "choice-btn";
+        btn.textContent = ch.text;
+        btn.addEventListener("click", () => handleVocabChoice(btn, ch.correct));
+        vocabChoices.appendChild(btn);
+      });
+    }
+
+    function handleVocabChoice(btn, isCorrect) {
+      if (vocabLocked) return;
+      vocabLocked = true;
+
+      if (isCorrect) {
+        btn.classList.add("correct-flash");
+        vocabScore++;
+        setTimeout(() => {
+          vocabIndex++;
+          if (vocabIndex >= vocabDeck.length) {
+            finishGame("vocab", vocabScore, vocabDeck.length, "Vocabulary Match");
+          } else {
+            showVocabQuestion();
+          }
+        }, 1000);
+      } else {
+        btn.classList.add("incorrect-flash");
+        // Highlight the correct one
+        const allBtns = vocabChoices.querySelectorAll(".choice-btn");
+        const correctDef = vocabDeck[vocabIndex].definition;
+        allBtns.forEach(b => {
+          if (b.textContent === correctDef) b.classList.add("correct-flash");
+        });
+        setTimeout(() => {
+          vocabIndex++;
+          if (vocabIndex >= vocabDeck.length) {
+            finishGame("vocab", vocabScore, vocabDeck.length, "Vocabulary Match");
+          } else {
+            showVocabQuestion();
+          }
+        }, 2000);
+      }
+    }
+
+    document.getElementById("vocabBackBtn").addEventListener("click", () => showScreen("menu"));
+
+    /* ==============================
+       ORAL VOCABULARY
+    ============================== */
+    let oralDeck = [], oralIndex = 0, oralScore = 0, oralLocked = false;
+
+    const oralDefinition = document.getElementById("oralDefinition");
+    const oralChoices = document.getElementById("oralChoices");
+
+    function startOral() {
+      stopCelebration();
+      oralDeck = shuffle(oralVocabData);
+      oralIndex = 0; oralScore = 0; oralLocked = false;
+      showScreen("oral");
+      showOralQuestion();
+    }
+
+    function showOralQuestion() {
+      const item = oralDeck[oralIndex];
+      oralDefinition.textContent = `"${item.definition}"`;
+      progressText.textContent = `Oral Vocabulary ${oralIndex + 1} of ${oralDeck.length}`;
+      oralLocked = false;
+
+      // Build word choices: correct + 2 random wrong
+      const wrongWords = oralVocabData
+        .filter(d => d.word !== item.word)
+        .map(d => d.word);
+      const wrongPick = shuffle(wrongWords).slice(0, 2);
+
+      const allChoices = shuffle([
+        { text: item.word, correct: true },
+        ...wrongPick.map(w => ({ text: w, correct: false }))
+      ]);
+
+      oralChoices.innerHTML = "";
+      allChoices.forEach(ch => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "choice-btn";
+        btn.textContent = ch.text;
+        btn.style.fontSize = "20px";
+        btn.style.fontWeight = "800";
+        btn.style.letterSpacing = "0.5px";
+        btn.addEventListener("click", () => handleOralChoice(btn, ch.correct, item.word));
+        oralChoices.appendChild(btn);
+      });
+    }
+
+    function handleOralChoice(btn, isCorrect, correctWord) {
+      if (oralLocked) return;
+      oralLocked = true;
+
+      if (isCorrect) {
+        btn.classList.add("correct-flash");
+        oralScore++;
+        speak(correctWord, null);
+        setTimeout(() => {
+          oralIndex++;
+          if (oralIndex >= oralDeck.length) {
+            finishGame("oral", oralScore, oralDeck.length, "Oral Vocabulary");
+          } else {
+            showOralQuestion();
+          }
+        }, 1200);
+      } else {
+        btn.classList.add("incorrect-flash");
+        const allBtns = oralChoices.querySelectorAll(".choice-btn");
+        allBtns.forEach(b => {
+          if (b.textContent === correctWord) b.classList.add("correct-flash");
+        });
+        speak(correctWord, null);
+        setTimeout(() => {
+          oralIndex++;
+          if (oralIndex >= oralDeck.length) {
+            finishGame("oral", oralScore, oralDeck.length, "Oral Vocabulary");
+          } else {
+            showOralQuestion();
+          }
+        }, 2200);
+      }
+    }
+
+    document.getElementById("oralBackBtn").addEventListener("click", () => {
+      speechSynthesis.cancel(); showScreen("menu");
+    });
+
+    /* ==============================
+       FINISH (shared)
+    ============================== */
+    function finishGame(gameKey, correct, total, gameName) {
+      speechSynthesis.cancel();
+      const pct = Math.round((correct / total) * 100);
+
+      const finishTitle = document.getElementById("finishTitle");
+      const finishStats = document.getElementById("finishStats");
+      const finishText = document.getElementById("finishText");
+      const finishButtons = document.getElementById("finishButtons");
+
+      if (pct === 100) {
+        finishTitle.textContent = "Perfect!";
+        finishText.textContent = `You got every ${gameName.toLowerCase()} question right!`;
+      } else if (pct >= 60) {
+        finishTitle.textContent = "Great Job!";
+        finishText.textContent = "Keep practicing to get them all!";
+      } else {
+        finishTitle.textContent = "Good Try!";
+        finishText.textContent = "Practice makes perfect. Let's try again!";
+      }
+
+      finishStats.textContent = `${correct} of ${total} correct (${pct}%)`;
+      celebrationImg.src = randomCelebImg();
+
+      finishButtons.innerHTML = "";
+
+      const pill = document.createElement("div");
+      pill.className = "segmented-actions";
+
+      const menuBtn = document.createElement("button");
+      menuBtn.type = "button";
+      menuBtn.className = "neutral-btn segment-btn segment-left";
+      menuBtn.textContent = "More Games";
+      menuBtn.addEventListener("click", () => { stopCelebration(); showScreen("menu"); });
+
+      const againBtn = document.createElement("button");
+      againBtn.type = "button";
+      againBtn.className = "teal-btn segment-btn";
+      againBtn.textContent = "Play Again";
+      againBtn.addEventListener("click", () => {
+        stopCelebration();
+        if (gameKey === "hf") startHF();
+        else if (gameKey === "vocab") startVocab();
+        else if (gameKey === "oral") startOral();
+      });
+
+      pill.appendChild(menuBtn);
+      pill.appendChild(againBtn);
+
+      const homeBtn = document.createElement("button");
+      homeBtn.type = "button";
+      homeBtn.className = "neutral-btn";
+      homeBtn.style.width = "200px";
+      homeBtn.textContent = "Home";
+      homeBtn.addEventListener("click", () => {
+        stopCelebration();
+        window.location.href = "index.html";
+      });
+
+      finishButtons.appendChild(pill);
+      finishButtons.appendChild(homeBtn);
+
+      playCelebration();
+      launchConfetti();
+      showScreen("finish");
+    }
+
+    /* ==============================
+       MENU EVENTS
+    ============================== */
+    document.getElementById("menuHF").addEventListener("click", startHF);
+    document.getElementById("menuVocab").addEventListener("click", startVocab);
+    document.getElementById("menuOral").addEventListener("click", startOral);
+    document.getElementById("menuEQ").addEventListener("click", () => showScreen("eq"));
+    document.getElementById("menuHomeBtn").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+    document.getElementById("eqBackBtn").addEventListener("click", () => showScreen("menu"));
+
+    /* ==============================
+       INIT
+    ============================== */
+    celebrationImg.src = randomCelebImg();
+    showScreen("menu");
+  </script>
+</body>
+</html>
