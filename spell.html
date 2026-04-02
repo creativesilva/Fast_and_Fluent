@@ -619,11 +619,9 @@
       "soar", "her", "dirt", "learn", "sure"
     ];
 
-    const maxCelebrationNumber = 40;
-    const celebrationImages = ["giphy.gif"];
-    for (let i = 1; i <= maxCelebrationNumber; i++) {
-      celebrationImages.push(`giphy-${i}.gif`);
-    }
+    const GIPHY_API_KEY = "kIyJEsGiHN0LpmsNMaYm8SXyj4p2rZjm";
+    const GIPHY_TAGS = ["great job animated cartoon", "gold star cartoon", "you did it animated", "confetti celebration animated", "thumbs up cartoon cute", "hooray cartoon", "super star animated sticker", "well done animated cute"];
+    let giphyCache = [];
 
     /* ==============================
        ELEMENTS
@@ -734,8 +732,38 @@
       return arr;
     }
 
-    function getRandomCelebrationImage() {
-      return celebrationImages[Math.floor(Math.random() * celebrationImages.length)];
+    async function preloadGiphyCache() {
+      try {
+        const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)];
+        const url = `https://api.giphy.com/v1/stickers/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(tag)}&rating=g&limit=25&offset=${Math.floor(Math.random() * 50)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.data && data.data.length > 0) {
+          giphyCache = data.data.map(g => g.images.fixed_height.url);
+        }
+      } catch (e) {
+        console.log("Giphy preload failed, will try again on next celebration");
+      }
+    }
+
+    async function getRandomCelebrationGif() {
+      if (giphyCache.length > 0) {
+        const gif = giphyCache.splice(Math.floor(Math.random() * giphyCache.length), 1)[0];
+        if (giphyCache.length < 5) preloadGiphyCache();
+        return gif;
+      }
+      try {
+        const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)];
+        const url = `https://api.giphy.com/v1/stickers/random?api_key=${GIPHY_API_KEY}&tag=${encodeURIComponent(tag)}&rating=g`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.data && data.data.images) {
+          return data.data.images.fixed_height.url;
+        }
+      } catch (e) {
+        console.log("Giphy fetch failed");
+      }
+      return "giphy.gif";
     }
 
     function playCelebration() {
@@ -915,7 +943,7 @@
       }
 
       finishStats.textContent = `${correctCount} of ${total} correct (${pct}%)`;
-      celebrationImg.src = getRandomCelebrationImage();
+      getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
 
       buildFinishButtons();
       playCelebration();
@@ -1041,7 +1069,7 @@
     /* ==============================
        INIT
     ============================== */
-    celebrationImg.src = getRandomCelebrationImage();
+    preloadGiphyCache();
     showScreen("home");
   </script>
 </body>
