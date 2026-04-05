@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Letter Sounds" />
+  <meta name="theme-color" content="#f0f0f5" />
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=12" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=12" />
+  <title>Letter Sounds</title>
+  <style>
+    :root {
+      --bg: #f0f0f5;
+      --glass: rgba(255,255,255,0.55);
+      --glass-border: rgba(255,255,255,0.65);
+      --glass-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      --text: #1a1a2e;
+      --muted: #6b7085;
+      --blur: 28px;
+      --radius: 24px;
+      --purple: rgba(139,92,246,0.85);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      user-select: none; -webkit-user-select: none;
+      overscroll-behavior-y: contain;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(147,130,255,0.28), transparent 50%),
+        radial-gradient(ellipse at 80% 5%, rgba(196,181,253,0.22), transparent 45%),
+        radial-gradient(ellipse at 50% 95%, rgba(251,146,60,0.16), transparent 40%),
+        var(--bg);
+    }
+
+    .app, button, img { touch-action: manipulation; }
+
+    .app {
+      width: min(100%, 420px);
+      min-height: min(86dvh, 700px);
+      background: var(--glass);
+      backdrop-filter: blur(var(--blur)) saturate(1.6);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+      border-radius: 36px;
+      box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
+      padding: 20px 18px 24px 18px;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+    .app::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%);
+      border-radius: 36px;
+    }
+
+    /* Screens */
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; position: relative; z-index: 1; flex: 1; }
+    .screen.active { display: flex; }
+
+    /* Top bar */
+    .topbar {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4px; margin-bottom: 8px; min-height: 36px; position: relative; z-index: 1;
+    }
+    .topbar-title { font-size: 15px; font-weight: 800; color: var(--text); }
+    .topbar-progress { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+    /* Progress dots */
+    .progress-dots {
+      display: flex; gap: 6px; justify-content: center; margin-bottom: 16px;
+    }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(0,0,0,0.08);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .dot.done { background: #8b5cf6; transform: scale(1.15); }
+    .dot.current { background: rgba(139,92,246,0.4); animation: dotPulse 1.2s ease-in-out infinite; }
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    /* Home screen */
+    .home-icon { font-size: 64px; margin-bottom: 8px; }
+    .home-title { font-size: clamp(28px, 8vw, 42px); font-weight: 900; margin-bottom: 4px; }
+    .home-subtitle { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 20px; }
+
+    /* Big letter display */
+    .big-letter {
+      font-size: clamp(100px, 28vw, 160px);
+      font-weight: 900; line-height: 1;
+      color: #7c3aed;
+      text-shadow: 0 4px 20px rgba(139,92,246,0.25);
+      margin-bottom: 8px;
+      animation: letterPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes letterPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .prompt-text {
+      font-size: 16px; font-weight: 700; color: var(--muted);
+      margin-bottom: 20px; min-height: 24px;
+    }
+
+    /* Picture choices */
+    .choices {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; width: 100%; max-width: 320px;
+    }
+    .choice-btn {
+      border: none; outline: none;
+      border-radius: 20px; padding: 14px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 2px solid rgba(0,0,0,0.04);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .choice-btn::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(160deg, rgba(255,255,255,0.5) 0%, transparent 50%);
+      border-radius: 20px;
+    }
+    .choice-btn:active { transform: scale(0.94); }
+    .choice-btn .choice-emoji { font-size: 44px; line-height: 1; position: relative; z-index: 1; }
+    .choice-btn .choice-label { font-size: 12px; font-weight: 700; color: var(--muted); position: relative; z-index: 1; }
+
+    .choice-btn.correct {
+      border-color: #22c55e; background: rgba(34,197,94,0.15);
+      box-shadow: 0 0 20px rgba(34,197,94,0.3);
+      animation: correctBounce 0.5s ease;
+    }
+    @keyframes correctBounce {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .choice-btn.wrong {
+      border-color: rgba(239,68,68,0.3);
+      animation: wrongShake 0.4s ease;
+    }
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* Speaker button */
+    .speaker-btn {
+      border: none; outline: none; cursor: pointer;
+      background: rgba(139,92,246,0.12);
+      border-radius: 50%; width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 10px;
+      transition: transform 0.15s ease, background 0.2s ease;
+      border: 1px solid rgba(139,92,246,0.15);
+    }
+    .speaker-btn:active { transform: scale(0.9); }
+
+    /* Buttons */
+    .glass-btn {
+      border: none; outline: none; cursor: pointer;
+      border-radius: 16px; padding: 14px 32px;
+      font-size: 16px; font-weight: 800;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.12s ease;
+      position: relative; overflow: hidden;
+    }
+    .glass-btn:active { transform: scale(0.96); }
+    .glass-btn::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(160deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+      border-radius: 16px;
+    }
+    .btn-primary {
+      background: linear-gradient(145deg, rgba(139,92,246,0.85), rgba(109,40,217,0.9));
+      color: #fff; box-shadow: 0 6px 18px rgba(139,92,246,0.3);
+      border: 1px solid rgba(196,181,253,0.4);
+    }
+    .btn-neutral {
+      background: rgba(0,0,0,0.05); color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+    /* Celebration */
+    .result-title { font-size: clamp(28px, 8vw, 44px); font-weight: 900; margin-bottom: 6px; }
+    .result-stats { font-size: 17px; font-weight: 700; color: #22c55e; margin-bottom: 6px; }
+    .result-text { font-size: 14px; color: var(--muted); margin-bottom: 10px; max-width: 280px; }
+    .celebration-img {
+      width: min(44vw, 160px); height: auto; max-height: 160px;
+      object-fit: cover; border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      margin-bottom: 8px; background: transparent;
+    }
+
+    /* Star burst animation */
+    .stars-container {
+      position: absolute; inset: 0; pointer-events: none; z-index: 10;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute; font-size: 24px;
+      animation: starFall 1.5s ease-out forwards;
+    }
+    @keyframes starFall {
+      0% { opacity: 1; transform: translateY(-20px) scale(0.5) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(120px) scale(1.2) rotate(360deg); }
+    }
+
+    @media (max-width: 390px) {
+      .big-letter { font-size: clamp(80px, 24vw, 130px); }
+      .choices { gap: 10px; max-width: 290px; }
+      .choice-btn .choice-emoji { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="topbar">
+      <span class="topbar-title" id="topTitle">Letter Sounds</span>
+      <span class="topbar-progress" id="topProgress"></span>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen active" id="homeScreen">
+      <div class="home-icon">&#x1F524;</div>
+      <div class="home-title">Letter Sounds</div>
+      <div class="home-subtitle">Tap the picture that matches!</div>
+      <button class="glass-btn btn-primary" id="startBtn" type="button">Let's Go!</button>
+      <div class="btn-row">
+        <button class="glass-btn btn-neutral" onclick="window.location.href='index.html'" type="button">Home</button>
+      </div>
+    </div>
+
+    <!-- GAME -->
+    <div class="screen" id="gameScreen">
+      <div class="progress-dots" id="progressDots"></div>
+      <button class="speaker-btn" id="speakerBtn" type="button">&#x1F50A;</button>
+      <div class="big-letter" id="bigLetter">B</div>
+      <div class="prompt-text" id="promptText">Tap the picture!</div>
+      <div class="choices" id="choices"></div>
+    </div>
+
+    <!-- FINISH -->
+    <div class="screen" id="finishScreen">
+      <div class="stars-container" id="starsContainer"></div>
+      <div class="result-title">Amazing!</div>
+      <div class="result-stats" id="resultStats">10 of 10 correct!</div>
+      <div class="result-text">You know your letter sounds! Great job!</div>
+      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration" />
+      <div class="btn-row">
+        <button class="glass-btn btn-neutral" onclick="window.location.href='index.html'" type="button">Home</button>
+        <button class="glass-btn btn-primary" id="playAgainBtn" type="button">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="correctSound" preload="auto"><source src="correct.mp3" type="audio/mpeg"></audio>
+  <audio id="celebrationSound" preload="auto"><source src="celebration_sound.mp3" type="audio/mpeg"></audio>
+
+  <script>
+    // Letter data: letter, phoneme hint, correct answer, wrong options
+    const letterData = [
+      { letter: "B", sound: "buh", correct: { emoji: "&#x1F34C;", label: "Banana" }, wrongs: [{ emoji: "&#x1F431;", label: "Cat" }, { emoji: "&#x2600;&#xFE0F;", label: "Sun" }] },
+      { letter: "C", sound: "kuh", correct: { emoji: "&#x1F370;", label: "Cake" }, wrongs: [{ emoji: "&#x1F436;", label: "Dog" }, { emoji: "&#x1F3E0;", label: "House" }] },
+      { letter: "D", sound: "duh", correct: { emoji: "&#x1F436;", label: "Dog" }, wrongs: [{ emoji: "&#x1F34E;", label: "Apple" }, { emoji: "&#x1F41F;", label: "Fish" }] },
+      { letter: "F", sound: "fff", correct: { emoji: "&#x1F41F;", label: "Fish" }, wrongs: [{ emoji: "&#x1F34C;", label: "Banana" }, { emoji: "&#x1F308;", label: "Rainbow" }] },
+      { letter: "G", sound: "guh", correct: { emoji: "&#x1F347;", label: "Grapes" }, wrongs: [{ emoji: "&#x2B50;", label: "Star" }, { emoji: "&#x1F427;", label: "Penguin" }] },
+      { letter: "H", sound: "huh", correct: { emoji: "&#x1F3E0;", label: "House" }, wrongs: [{ emoji: "&#x1F431;", label: "Cat" }, { emoji: "&#x1F34C;", label: "Banana" }] },
+      { letter: "L", sound: "lll", correct: { emoji: "&#x1F981;", label: "Lion" }, wrongs: [{ emoji: "&#x1F41F;", label: "Fish" }, { emoji: "&#x1F370;", label: "Cake" }] },
+      { letter: "M", sound: "mmm", correct: { emoji: "&#x1F319;", label: "Moon" }, wrongs: [{ emoji: "&#x1F436;", label: "Dog" }, { emoji: "&#x1F347;", label: "Grapes" }] },
+      { letter: "P", sound: "puh", correct: { emoji: "&#x1F427;", label: "Penguin" }, wrongs: [{ emoji: "&#x1F981;", label: "Lion" }, { emoji: "&#x1F319;", label: "Moon" }] },
+      { letter: "S", sound: "sss", correct: { emoji: "&#x2B50;", label: "Star" }, wrongs: [{ emoji: "&#x1F3E0;", label: "House" }, { emoji: "&#x1F34E;", label: "Apple" }] },
+      { letter: "T", sound: "tuh", correct: { emoji: "&#x1F422;", label: "Turtle" }, wrongs: [{ emoji: "&#x1F34C;", label: "Banana" }, { emoji: "&#x1F431;", label: "Cat" }] },
+      { letter: "R", sound: "rrr", correct: { emoji: "&#x1F308;", label: "Rainbow" }, wrongs: [{ emoji: "&#x1F427;", label: "Penguin" }, { emoji: "&#x1F422;", label: "Turtle" }] },
+    ];
+
+    const ROUND_COUNT = 8;
+    const GIPHY_API_KEY = "kIyJEsGiHN0LpmsNMaYm8SXyj4p2rZjm";
+    const GIPHY_TAGS = ["great job animated cartoon", "gold star cartoon", "you did it animated", "confetti celebration animated", "thumbs up cartoon cute", "hooray cartoon", "super star animated sticker", "well done animated cute"];
+    let giphyCache = [];
+
+    let deck = [];
+    let index = 0;
+    let correctCount = 0;
+    let waiting = false;
+
+    const correctSound = document.getElementById("correctSound");
+    const celebrationSound = document.getElementById("celebrationSound");
+
+    let bestVoice = null;
+    function findBestVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices.length) return;
+      // Prefer Apple enhanced/premium voices, then any female US English voice
+      const prefs = ["samantha", "zoe", "karen", "fiona", "allison", "ava", "susan"];
+      for (const pref of prefs) {
+        const v = voices.find(v => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en"));
+        if (v) { bestVoice = v; return; }
+      }
+      // Fallback: any en-US voice that isn't "Alex" (robotic)
+      const english = voices.filter(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("alex"));
+      if (english.length) bestVoice = english[0];
+    }
+    if ("speechSynthesis" in window) {
+      findBestVoice();
+      window.speechSynthesis.onvoiceschanged = findBestVoice;
+    }
+
+    function speak(text, rate) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = rate || 0.85;
+      u.pitch = 1.05;
+      u.lang = "en-US";
+      if (bestVoice) u.voice = bestVoice;
+      window.speechSynthesis.speak(u);
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Giphy
+    async function preloadGiphyCache() {
+      try {
+        const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)];
+        const url = `https://api.giphy.com/v1/stickers/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(tag)}&rating=g&limit=25&offset=${Math.floor(Math.random() * 50)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.data && data.data.length > 0) {
+          giphyCache = data.data.map(g => g.images.fixed_height.url);
+        }
+      } catch (e) {}
+    }
+    async function getRandomCelebrationGif() {
+      if (giphyCache.length > 0) {
+        const gif = giphyCache.splice(Math.floor(Math.random() * giphyCache.length), 1)[0];
+        if (giphyCache.length < 5) preloadGiphyCache();
+        return gif;
+      }
+      try {
+        const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)];
+        const url = `https://api.giphy.com/v1/stickers/random?api_key=${GIPHY_API_KEY}&tag=${encodeURIComponent(tag)}&rating=g`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.data && data.data.images) return data.data.images.fixed_height.url;
+      } catch (e) {}
+      return "giphy.gif";
+    }
+
+    // Screens
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
+    // Build dots
+    function buildDots() {
+      const container = document.getElementById("progressDots");
+      container.innerHTML = "";
+      for (let i = 0; i < ROUND_COUNT; i++) {
+        const dot = document.createElement("div");
+        dot.className = "dot" + (i < index ? " done" : "") + (i === index ? " current" : "");
+        container.appendChild(dot);
+      }
+    }
+
+    // Show round
+    function showRound() {
+      if (index >= ROUND_COUNT) {
+        finishGame();
+        return;
+      }
+
+      waiting = false;
+      const data = deck[index];
+      document.getElementById("topProgress").textContent = (index + 1) + " of " + ROUND_COUNT;
+      document.getElementById("bigLetter").innerHTML = data.letter;
+      document.getElementById("bigLetter").style.animation = "none";
+      requestAnimationFrame(() => {
+        document.getElementById("bigLetter").style.animation = "letterPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)";
+      });
+
+      buildDots();
+
+      // Build choices
+      const allChoices = shuffle([
+        { ...data.correct, isCorrect: true },
+        { ...data.wrongs[0], isCorrect: false },
+        { ...data.wrongs[1], isCorrect: false }
+      ]);
+
+      const choicesEl = document.getElementById("choices");
+      choicesEl.innerHTML = "";
+      allChoices.forEach(c => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.type = "button";
+        btn.innerHTML = `<span class="choice-emoji">${c.emoji}</span><span class="choice-label">${c.label}</span>`;
+        btn.addEventListener("click", () => handleChoice(btn, c));
+        choicesEl.appendChild(btn);
+      });
+
+      // Speak the prompt
+      document.getElementById("promptText").textContent = "Tap the picture!";
+      setTimeout(() => {
+        speak(data.letter + " says " + data.sound + ". Tap the picture that starts with " + data.letter + "!", 0.85);
+      }, 300);
+    }
+
+    function handleChoice(btn, choice) {
+      if (waiting) return;
+
+      if (choice.isCorrect) {
+        waiting = true;
+        btn.classList.add("correct");
+        correctCount++;
+        correctSound.currentTime = 0;
+        correctSound.play().catch(() => {});
+        speak("Yes! " + choice.label + " starts with " + deck[index].letter + "!", 0.9);
+        document.getElementById("promptText").textContent = "Yes! " + choice.label + "!";
+
+        setTimeout(() => {
+          index++;
+          showRound();
+        }, 1800);
+      } else {
+        btn.classList.add("wrong");
+        speak("That's " + choice.label + ". Try again!", 0.9);
+        document.getElementById("promptText").textContent = "Try again!";
+        setTimeout(() => {
+          btn.classList.remove("wrong");
+        }, 600);
+      }
+    }
+
+    function finishGame() {
+      document.getElementById("topProgress").textContent = "";
+      document.getElementById("resultStats").textContent = correctCount + " of " + ROUND_COUNT + " correct!";
+      getRandomCelebrationGif().then(src => { document.getElementById("celebrationImg").src = src; });
+      showScreen("finishScreen");
+      celebrationSound.currentTime = 0;
+      celebrationSound.play().catch(() => {});
+      speak("Amazing! Great job! You know your letter sounds!", 0.9);
+      spawnStars();
+    }
+
+    function spawnStars() {
+      const container = document.getElementById("starsContainer");
+      container.innerHTML = "";
+      const emojis = ["&#x2B50;", "&#x1F31F;", "&#x2728;", "&#x1F4AB;"];
+      for (let i = 0; i < 12; i++) {
+        const star = document.createElement("div");
+        star.className = "star";
+        star.innerHTML = emojis[i % emojis.length];
+        star.style.left = Math.random() * 90 + 5 + "%";
+        star.style.animationDelay = Math.random() * 0.8 + "s";
+        star.style.fontSize = (18 + Math.random() * 16) + "px";
+        container.appendChild(star);
+      }
+    }
+
+    function startGame() {
+      deck = shuffle([...letterData]).slice(0, ROUND_COUNT);
+      index = 0;
+      correctCount = 0;
+      showScreen("gameScreen");
+      showRound();
+    }
+
+    // Speaker replay button
+    document.getElementById("speakerBtn").addEventListener("click", () => {
+      if (index < deck.length) {
+        const data = deck[index];
+        speak(data.letter + " says " + data.sound + ". Tap the picture that starts with " + data.letter + "!", 0.85);
+      }
+    });
+
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("playAgainBtn").addEventListener("click", startGame);
+
+    preloadGiphyCache();
+  </script>
+</body>
+</html>

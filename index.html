@@ -2,327 +2,248 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
-  <meta name="theme-color" content="#f8fafc" />
-
-  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=11" />
-  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=11" />
-  <link rel="icon" type="image/png" sizes="512x512" href="rocket_book_logo.png?v=11" />
-  <link rel="shortcut icon" href="rocket_book_logo.png?v=11" />
-
+  <meta name="theme-color" content="#f0f0f5" />
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=12" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=12" />
+  <link rel="shortcut icon" href="rocket_book_logo.png?v=12" />
   <title>Rocket Book Games</title>
-
   <style>
     :root {
-      --bg1: #fff7ed;
-      --bg2: #eff6ff;
-      --text: #172033;
-      --muted: #5f6b85;
-      --shadow: 0 18px 40px rgba(0,0,0,0.12);
+      --bg: #f0f0f5;
+      --glass: rgba(255,255,255,0.55);
+      --glass-border: rgba(255,255,255,0.65);
+      --glass-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      --text: #1a1a2e;
+      --muted: #6b7085;
+      --blur: 28px;
+      --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
     html, body {
-      width: 100%;
-      min-height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
+      width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto;
       touch-action: pan-y;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
       color: var(--text);
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-top: max(14px, env(safe-area-inset-top));
-      padding-right: max(14px, env(safe-area-inset-right));
-      padding-bottom: max(20px, env(safe-area-inset-bottom));
-      padding-left: max(14px, env(safe-area-inset-left));
-      user-select: none;
-      -webkit-user-select: none;
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      user-select: none; -webkit-user-select: none;
       -webkit-text-size-adjust: 100%;
       overscroll-behavior-y: contain;
       background:
-        radial-gradient(circle at 15% 10%, rgba(251,146,60,0.22), transparent 26%),
-        radial-gradient(circle at 85% 8%, rgba(59,130,246,0.18), transparent 26%),
-        radial-gradient(circle at 10% 90%, rgba(236,72,153,0.16), transparent 24%),
-        radial-gradient(circle at 90% 88%, rgba(139,92,246,0.16), transparent 24%),
-        radial-gradient(circle at 50% 50%, rgba(20,184,166,0.06), transparent 40%),
-        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+        radial-gradient(ellipse at 20% 0%, rgba(147,130,255,0.25), transparent 50%),
+        radial-gradient(ellipse at 80% 5%, rgba(59,180,246,0.20), transparent 45%),
+        radial-gradient(ellipse at 10% 95%, rgba(251,146,60,0.18), transparent 40%),
+        radial-gradient(ellipse at 85% 90%, rgba(236,72,153,0.16), transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba(20,184,166,0.08), transparent 50%),
+        var(--bg);
     }
 
     .app, button, img, a { touch-action: manipulation; }
 
     .app {
-      width: min(100%, 430px);
-      min-height: 0;
-      max-height: min(96dvh, 800px);
-      height: min(96dvh, 800px);
-      background: rgba(255,255,255,0.90);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 32px;
-      box-shadow: var(--shadow);
-      padding: 22px 20px 24px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.7);
+      width: min(100%, 420px);
+      max-height: min(96dvh, 820px);
+      background: var(--glass);
+      backdrop-filter: blur(var(--blur)) saturate(1.6);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+      border-radius: 36px;
+      box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
+      padding: 24px 20px 28px 20px;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; overflow: hidden;
+      border: 1px solid var(--glass-border);
     }
 
     .app::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(135deg,
-          rgba(239,68,68,0.04) 0%,
-          rgba(251,146,60,0.04) 20%,
-          rgba(250,204,21,0.04) 40%,
-          rgba(34,197,94,0.04) 60%,
-          rgba(59,130,246,0.04) 80%,
-          rgba(139,92,246,0.04) 100%);
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%);
+      border-radius: 36px;
     }
 
     .screen {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      flex-direction: column;
-      padding: 4px 4px 0 4px;
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; flex-direction: column; width: 100%;
     }
 
     .brand-logo {
-      width: min(28vw, 90px);
-      max-width: 90px;
-      max-height: 90px;
-      height: auto;
-      margin: 0 0 8px 0;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
+      width: min(22vw, 76px); height: auto;
+      margin: 0 0 8px 0; object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.10));
       animation: logoFloat 4s ease-in-out infinite;
     }
-
     @keyframes logoFloat {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-4px); }
     }
 
     .app-title {
-      font-size: clamp(26px, 7vw, 40px);
-      font-weight: 900;
-      line-height: 1.04;
-      color: var(--text);
-      letter-spacing: -0.5px;
-      margin-bottom: 2px;
+      font-size: clamp(26px, 7vw, 38px);
+      font-weight: 800; line-height: 1.06;
+      letter-spacing: -0.5px; margin-bottom: 10px;
     }
 
-    .app-subtitle {
-      font-size: 14px;
-      line-height: 1.3;
-      color: var(--muted);
+    /* ===== iOS Segmented Control Toggle ===== */
+    .age-toggle-wrap {
+      width: 100%; max-width: 260px;
       margin-bottom: 10px;
-      font-weight: 600;
+    }
+    .age-toggle {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: rgba(0,0,0,0.06);
+      border-radius: 12px; padding: 3px;
+      position: relative;
+    }
+    .age-toggle-slider {
+      position: absolute; top: 3px; left: 3px;
+      width: calc(50% - 3px); height: calc(100% - 6px);
+      background: #fff;
+      border-radius: 9px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+    }
+    .age-toggle.elc .age-toggle-slider {
+      transform: translateX(100%);
+    }
+    .age-toggle label {
+      position: relative; z-index: 1;
+      padding: 8px 0; font-size: 13px; font-weight: 700;
+      text-align: center; cursor: pointer;
+      color: var(--muted);
+      transition: color 0.25s ease;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .age-toggle label .toggle-emoji { font-size: 15px; }
+    .age-toggle input { display: none; }
+    .age-toggle label.active { color: var(--text); }
+
+    .age-subtitle {
+      font-size: 12px; font-weight: 600;
+      color: var(--muted); margin-bottom: 14px;
+      min-height: 16px;
+      transition: opacity 0.2s ease;
     }
 
-    .unit-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, rgba(20,184,166,0.12) 0%, rgba(59,130,246,0.12) 100%);
-      color: #0f766e;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 8px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      border: 1px solid rgba(20,184,166,0.15);
-    }
-
-    /* ---- Game Tiles ---- */
+    /* ===== Game Tiles ===== */
     .game-grid {
-      width: 100%;
-      max-width: 320px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      width: 100%; max-width: 310px;
+      display: grid; grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
     .game-tile {
-      border: none;
-      border-radius: 20px;
-      padding: 16px 10px 14px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-align: center;
-      min-width: 0;
-      min-height: 0;
+      border: none; outline: none;
+      border-radius: var(--radius);
+      padding: 18px 10px 16px 10px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 5px; text-align: center;
       cursor: pointer;
+      position: relative; overflow: hidden;
       transition: transform 0.12s ease, box-shadow 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
+    .game-tile:active { transform: scale(0.95); }
 
-    .game-tile:active {
-      transform: scale(0.96);
+    .game-tile::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      border-radius: var(--radius);
+      background: linear-gradient(160deg, rgba(255,255,255,0.45) 0%, transparent 50%);
     }
-
     .game-tile::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 22px;
-      pointer-events: none;
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.35);
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      border-radius: var(--radius);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -1px 1px rgba(0,0,0,0.03);
     }
 
-    .tile-icon {
-      font-size: 36px;
-      line-height: 1;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.08));
-    }
+    .tile-icon { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)); }
+    .tile-name { font-size: 13px; font-weight: 800; line-height: 1.15; position: relative; z-index: 1; }
+    .tile-desc { font-size: 10.5px; font-weight: 600; line-height: 1.2; opacity: 0.7; position: relative; z-index: 1; }
 
-    .tile-name {
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: 0.1px;
-    }
-
-    .tile-desc {
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 1.2;
-      opacity: 0.75;
-    }
-
-    /* Tile themes */
+    /* 1st Grade tile colors */
     .tile-fast {
-      background: linear-gradient(145deg, #6ee7b7 0%, #34d399 40%, #10b981 100%);
-      color: #064e3b;
-      box-shadow: 0 8px 20px rgba(16,185,129,0.28);
+      background: linear-gradient(145deg, rgba(110,231,183,0.85), rgba(16,185,129,0.9));
+      color: #064e3b; box-shadow: 0 6px 18px rgba(16,185,129,0.25);
+      border: 1px solid rgba(110,231,183,0.5);
     }
-
     .tile-rainbow {
-      background: linear-gradient(145deg, #fde68a 0%, #fbbf24 40%, #f59e0b 100%);
-      color: #78350f;
-      box-shadow: 0 8px 20px rgba(245,158,11,0.28);
+      background: linear-gradient(145deg, rgba(253,230,138,0.85), rgba(245,158,11,0.9));
+      color: #78350f; box-shadow: 0 6px 18px rgba(245,158,11,0.25);
+      border: 1px solid rgba(253,230,138,0.5);
     }
-
     .tile-spelling {
-      background: linear-gradient(145deg, #fcd34d 0%, #fbbf24 40%, #d97706 100%);
-      color: #451a03;
-      box-shadow: 0 8px 20px rgba(217,119,6,0.28);
+      background: linear-gradient(145deg, rgba(252,211,77,0.85), rgba(217,119,6,0.9));
+      color: #451a03; box-shadow: 0 6px 18px rgba(217,119,6,0.25);
+      border: 1px solid rgba(252,211,77,0.5);
     }
-
     .tile-brain {
-      background: linear-gradient(145deg, #67e8f9 0%, #22d3ee 40%, #06b6d4 100%);
-      color: #083344;
-      box-shadow: 0 8px 20px rgba(6,182,212,0.28);
+      background: linear-gradient(145deg, rgba(103,232,249,0.85), rgba(6,182,212,0.9));
+      color: #083344; box-shadow: 0 6px 18px rgba(6,182,212,0.25);
+      border: 1px solid rgba(103,232,249,0.5);
     }
 
-    /* ---- Footer ---- */
+    /* ELC tile colors — softer pastels */
+    .tile-letters {
+      background: linear-gradient(145deg, rgba(196,181,253,0.8), rgba(139,92,246,0.85));
+      color: #3b0764; box-shadow: 0 6px 18px rgba(139,92,246,0.22);
+      border: 1px solid rgba(196,181,253,0.5);
+    }
+    .tile-counting {
+      background: linear-gradient(145deg, rgba(110,231,183,0.8), rgba(52,211,153,0.85));
+      color: #064e3b; box-shadow: 0 6px 18px rgba(52,211,153,0.22);
+      border: 1px solid rgba(110,231,183,0.5);
+    }
+    .tile-shapes {
+      background: linear-gradient(145deg, rgba(253,186,116,0.8), rgba(249,115,22,0.85));
+      color: #7c2d12; box-shadow: 0 6px 18px rgba(249,115,22,0.22);
+      border: 1px solid rgba(253,186,116,0.5);
+    }
+    .tile-colors {
+      background: linear-gradient(145deg, rgba(252,165,165,0.8), rgba(239,68,68,0.82));
+      color: #7f1d1d; box-shadow: 0 6px 18px rgba(239,68,68,0.20);
+      border: 1px solid rgba(252,165,165,0.5);
+    }
+
+    /* Tile entrance animation */
+    .game-grid .game-tile {
+      opacity: 0; transform: translateY(12px) scale(0.96);
+      animation: tileIn 0.35s ease forwards;
+    }
+    .game-grid .game-tile:nth-child(1) { animation-delay: 0.04s; }
+    .game-grid .game-tile:nth-child(2) { animation-delay: 0.10s; }
+    .game-grid .game-tile:nth-child(3) { animation-delay: 0.16s; }
+    .game-grid .game-tile:nth-child(4) { animation-delay: 0.22s; }
+    @keyframes tileIn {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     .footer {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
+      margin-top: 14px;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
-
-    .micro-note {
-      font-size: 12px;
-      line-height: 1.35;
-      color: var(--muted);
-    }
-
-    .credit-link {
-      color: inherit;
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .credit-link:hover,
-    .credit-link:focus {
-      text-decoration: underline;
-    }
-
-    /* ---- Canby avatar ---- */
-    .canby-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-      border: 2px solid rgba(255,255,255,0.8);
-      margin-bottom: 2px;
-    }
+    .micro-note { font-size: 11px; line-height: 1.35; color: var(--muted); }
+    .credit-link { color: inherit; text-decoration: none; font-weight: 700; }
+    .credit-link:hover { text-decoration: underline; }
 
     @media (max-width: 390px) {
-      .brand-logo {
-        width: min(34vw, 100px);
-        max-width: 100px;
-        max-height: 100px;
-      }
-
-      .game-grid {
-        gap: 10px;
-        max-width: 310px;
-      }
-
-      .game-tile {
-        padding: 16px 10px 14px 10px;
-        border-radius: 20px;
-      }
-
-      .tile-icon { font-size: 32px; }
-      .tile-name { font-size: 13px; }
-
-      .app-title {
-        font-size: clamp(28px, 7vw, 38px);
-      }
-    }
-
-    @media (max-width: 340px) {
-      .game-grid {
-        grid-template-columns: 1fr;
-        max-width: 260px;
-      }
-
-      .game-tile {
-        flex-direction: row;
-        padding: 14px 16px;
-        gap: 12px;
-        text-align: left;
-        justify-content: flex-start;
-      }
-
-      .tile-icon { font-size: 28px; }
+      .brand-logo { width: min(26vw, 70px); }
+      .game-grid { max-width: 290px; gap: 9px; }
+      .game-tile { padding: 16px 8px 14px 8px; border-radius: 20px; }
+      .tile-icon { font-size: 30px; }
+      .tile-name { font-size: 12.5px; }
     }
   </style>
 </head>
@@ -331,28 +252,37 @@
     <div class="screen">
       <img src="rocket_book_logo.png" alt="Rocket Book logo" class="brand-logo" />
       <div class="app-title">Rocket Book Games</div>
-      <div class="unit-badge">Wonders Unit 5 Week 3</div>
-      <div class="app-subtitle">Tap a game to start playing!</div>
 
-      <div class="game-grid">
+      <div class="age-toggle-wrap">
+        <div class="age-toggle" id="ageToggle">
+          <label id="labelGrade" class="active" onclick="switchMode('grade')">
+            <span class="toggle-emoji">&#x1F4DA;</span> 1st Grade
+          </label>
+          <label id="labelELC" onclick="switchMode('elc')">
+            <span class="toggle-emoji">&#x1F423;</span> ELC
+          </label>
+          <div class="age-toggle-slider"></div>
+        </div>
+      </div>
+
+      <div class="age-subtitle" id="ageSubtitle">Wonders Unit 5 Week 3</div>
+
+      <div class="game-grid" id="gradeGames">
         <button class="game-tile tile-fast" onclick="window.location.href='fast.html'" type="button">
           <span class="tile-icon">&#x1F3CE;&#xFE0F;</span>
           <span class="tile-name">Fast &amp; Fluent</span>
           <span class="tile-desc">Read sentences aloud</span>
         </button>
-
         <button class="game-tile tile-rainbow" onclick="window.location.href='rainbow.html'" type="button">
           <span class="tile-icon">&#x1F308;</span>
           <span class="tile-name">Rainbow Reader</span>
           <span class="tile-desc">Sight word practice</span>
         </button>
-
         <button class="game-tile tile-spelling" onclick="window.location.href='spell.html'" type="button">
           <span class="tile-icon">&#x1F41D;</span>
           <span class="tile-name">Spelling Bee</span>
           <span class="tile-desc">Listen &amp; spell words</span>
         </button>
-
         <button class="game-tile tile-brain" onclick="window.location.href='learn.html'" type="button">
           <span class="tile-icon">&#x1F9E0;</span>
           <span class="tile-name">Brain Games</span>
@@ -360,9 +290,30 @@
         </button>
       </div>
 
+      <div class="game-grid" id="elcGames" style="display:none;">
+        <button class="game-tile tile-letters" onclick="window.location.href='letter_sounds.html'" type="button">
+          <span class="tile-icon">&#x1F524;</span>
+          <span class="tile-name">Letter Sounds</span>
+          <span class="tile-desc">Tap what you hear</span>
+        </button>
+        <button class="game-tile tile-counting" onclick="window.location.href='counting.html'" type="button">
+          <span class="tile-icon">&#x1F41B;</span>
+          <span class="tile-name">Counting Critters</span>
+          <span class="tile-desc">Count &amp; tap</span>
+        </button>
+        <button class="game-tile tile-shapes" onclick="window.location.href='shapes.html'" type="button">
+          <span class="tile-icon">&#x1F4A0;</span>
+          <span class="tile-name">Shape Builder</span>
+          <span class="tile-desc">Match the shapes</span>
+        </button>
+        <button class="game-tile tile-colors" onclick="window.location.href='colors.html'" type="button">
+          <span class="tile-icon">&#x1F3A8;</span>
+          <span class="tile-name">Color Splash</span>
+          <span class="tile-desc">Find the colors</span>
+        </button>
+      </div>
+
       <div class="footer">
-        <img src="canby.png" alt="Ms. Canby" class="canby-avatar" />
-        <div class="micro-note">Created for Ms. Canby's friends</div>
         <div class="micro-note">
           Designed by
           <a class="credit-link" href="https://www.instagram.com/silvateaches/" target="_blank" rel="noopener noreferrer">CreativeSilva</a>
@@ -370,5 +321,51 @@
       </div>
     </div>
   </div>
+
+  <script>
+    let currentMode = localStorage.getItem("rocketBookMode") || "grade";
+
+    function switchMode(mode) {
+      currentMode = mode;
+      localStorage.setItem("rocketBookMode", mode);
+
+      const toggle = document.getElementById("ageToggle");
+      const gradeGames = document.getElementById("gradeGames");
+      const elcGames = document.getElementById("elcGames");
+      const subtitle = document.getElementById("ageSubtitle");
+      const labelGrade = document.getElementById("labelGrade");
+      const labelELC = document.getElementById("labelELC");
+
+      if (mode === "elc") {
+        toggle.classList.add("elc");
+        labelGrade.classList.remove("active");
+        labelELC.classList.add("active");
+        gradeGames.style.display = "none";
+        elcGames.style.display = "";
+        subtitle.textContent = "Early Learning Center";
+        elcGames.querySelectorAll(".game-tile").forEach(function(t, i) {
+          t.style.animation = "none";
+          t.offsetHeight;
+          t.style.animation = "tileIn 0.35s ease forwards " + (0.04 + i * 0.06) + "s";
+        });
+      } else {
+        toggle.classList.remove("elc");
+        labelELC.classList.remove("active");
+        labelGrade.classList.add("active");
+        elcGames.style.display = "none";
+        gradeGames.style.display = "";
+        subtitle.textContent = "Wonders Unit 5 Week 3";
+        gradeGames.querySelectorAll(".game-tile").forEach(function(t, i) {
+          t.style.animation = "none";
+          t.offsetHeight;
+          t.style.animation = "tileIn 0.35s ease forwards " + (0.04 + i * 0.06) + "s";
+        });
+      }
+    }
+
+    if (currentMode === "elc") {
+      switchMode("elc");
+    }
+  </script>
 </body>
 </html>

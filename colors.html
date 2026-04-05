@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Color Splash" />
+  <meta name="theme-color" content="#f0f0f5" />
+  <link rel="apple-touch-icon" href="rocket_book_logo.png?v=12" />
+  <link rel="icon" type="image/png" sizes="192x192" href="rocket_book_logo.png?v=12" />
+  <title>Color Splash</title>
+  <style>
+    :root {
+      --bg: #f0f0f5; --glass: rgba(255,255,255,0.55); --glass-border: rgba(255,255,255,0.65);
+      --glass-shadow: 0 8px 32px rgba(0,0,0,0.08); --text: #1a1a2e; --muted: #6b7085; --blur: 28px; --radius: 24px;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text); min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      user-select: none; -webkit-user-select: none; overscroll-behavior-y: contain;
+      background:
+        radial-gradient(ellipse at 15% 5%, rgba(239,68,68,0.22), transparent 40%),
+        radial-gradient(ellipse at 85% 0%, rgba(59,130,246,0.22), transparent 40%),
+        radial-gradient(ellipse at 50% 95%, rgba(34,197,94,0.18), transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba(251,191,36,0.10), transparent 50%),
+        var(--bg);
+    }
+    .app, button, img { touch-action: manipulation; }
+    .app {
+      width: min(100%, 420px); min-height: min(86dvh, 700px);
+      background: var(--glass); backdrop-filter: blur(var(--blur)) saturate(1.6);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+      border-radius: 36px; box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
+      padding: 20px 18px 24px 18px; display: flex; flex-direction: column; align-items: center;
+      position: relative; overflow: hidden; border: 1px solid var(--glass-border);
+    }
+    .app::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%); border-radius: 36px; }
+
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; position: relative; z-index: 1; flex: 1; }
+    .screen.active { display: flex; }
+    .topbar { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; margin-bottom: 8px; min-height: 36px; position: relative; z-index: 1; }
+    .topbar-title { font-size: 15px; font-weight: 800; }
+    .topbar-progress { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+    .home-icon { font-size: 64px; margin-bottom: 8px; }
+    .home-title { font-size: clamp(28px, 8vw, 42px); font-weight: 900; margin-bottom: 4px; }
+    .home-subtitle { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 20px; }
+
+    .progress-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(0,0,0,0.08); transition: background 0.3s, transform 0.3s; }
+    .dot.done { background: #ef4444; transform: scale(1.15); }
+    .dot.current { background: rgba(239,68,68,0.4); animation: dotPulse 1.2s ease-in-out infinite; }
+    @keyframes dotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+    /* Color swatch display */
+    .color-swatch {
+      width: 100px; height: 100px; border-radius: 28px;
+      margin-bottom: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      border: 3px solid rgba(255,255,255,0.6);
+      animation: swatchPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes swatchPop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .color-name {
+      font-size: clamp(32px, 9vw, 48px); font-weight: 900; line-height: 1;
+      margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .prompt-text { font-size: 16px; font-weight: 700; color: var(--muted); margin-bottom: 14px; min-height: 24px; }
+    .score-text { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 10px; }
+
+    /* Object grid */
+    .object-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; width: 100%; max-width: 310px;
+    }
+    .object-btn {
+      border: none; outline: none; cursor: pointer;
+      border-radius: 18px; padding: 12px 6px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 2px solid rgba(0,0,0,0.04); box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, border-color 0.2s ease, opacity 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .object-btn::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(160deg, rgba(255,255,255,0.5) 0%, transparent 50%); border-radius: 18px; }
+    .object-btn:active { transform: scale(0.94); }
+    .object-btn .obj-emoji { font-size: 38px; line-height: 1; position: relative; z-index: 1; }
+    .object-btn .obj-label { font-size: 10px; font-weight: 700; color: var(--muted); position: relative; z-index: 1; }
+    .object-btn.correct { border-color: #22c55e; background: rgba(34,197,94,0.15); box-shadow: 0 0 16px rgba(34,197,94,0.3); }
+    .object-btn.found { opacity: 0.4; pointer-events: none; }
+    .object-btn.wrong { animation: wrongShake 0.4s ease; }
+    @keyframes wrongShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
+    .speaker-btn {
+      border: none; outline: none; cursor: pointer;
+      background: rgba(239,68,68,0.12); border-radius: 50%; width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 10px; transition: transform 0.15s ease;
+      border: 1px solid rgba(239,68,68,0.15);
+    }
+    .speaker-btn:active { transform: scale(0.9); }
+
+    .glass-btn {
+      border: none; outline: none; cursor: pointer; border-radius: 16px; padding: 14px 32px;
+      font-size: 16px; font-weight: 800; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.12s ease; position: relative; overflow: hidden;
+    }
+    .glass-btn:active { transform: scale(0.96); }
+    .glass-btn::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(160deg, rgba(255,255,255,0.4) 0%, transparent 50%); border-radius: 16px; }
+    .btn-primary { background: linear-gradient(145deg, rgba(252,165,165,0.85), rgba(239,68,68,0.9)); color: #fff; box-shadow: 0 6px 18px rgba(239,68,68,0.3); border: 1px solid rgba(252,165,165,0.4); }
+    .btn-neutral { background: rgba(0,0,0,0.05); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04); }
+    .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+    .result-title { font-size: clamp(28px, 8vw, 44px); font-weight: 900; margin-bottom: 6px; }
+    .result-stats { font-size: 17px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
+    .result-text { font-size: 14px; color: var(--muted); margin-bottom: 10px; max-width: 280px; }
+    .celebration-img { width: min(44vw, 160px); height: auto; max-height: 160px; object-fit: cover; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-bottom: 8px; }
+
+    @media (max-width: 390px) {
+      .color-swatch { width: 80px; height: 80px; border-radius: 22px; }
+      .object-grid { gap: 8px; max-width: 280px; }
+      .object-btn .obj-emoji { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <span class="topbar-title">Color Splash</span>
+      <span class="topbar-progress" id="topProgress"></span>
+    </div>
+
+    <div class="screen active" id="homeScreen">
+      <div class="home-icon">&#x1F3A8;</div>
+      <div class="home-title">Color Splash</div>
+      <div class="home-subtitle">Find the right colors!</div>
+      <button class="glass-btn btn-primary" id="startBtn" type="button">Let's Play!</button>
+      <div class="btn-row">
+        <button class="glass-btn btn-neutral" onclick="window.location.href='index.html'" type="button">Home</button>
+      </div>
+    </div>
+
+    <div class="screen" id="gameScreen">
+      <div class="progress-dots" id="progressDots"></div>
+      <button class="speaker-btn" id="speakerBtn" type="button">&#x1F50A;</button>
+      <div class="color-swatch" id="colorSwatch"></div>
+      <div class="color-name" id="colorName">Red</div>
+      <div class="prompt-text" id="promptText">Tap everything that is RED!</div>
+      <div class="score-text" id="scoreText"></div>
+      <div class="object-grid" id="objectGrid"></div>
+    </div>
+
+    <div class="screen" id="finishScreen">
+      <div class="result-title">Color Genius!</div>
+      <div class="result-stats" id="resultStats"></div>
+      <div class="result-text">You know your colors! Fantastic!</div>
+      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration" />
+      <div class="btn-row">
+        <button class="glass-btn btn-neutral" onclick="window.location.href='index.html'" type="button">Home</button>
+        <button class="glass-btn btn-primary" id="playAgainBtn" type="button">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="correctSound" preload="auto"><source src="correct.mp3" type="audio/mpeg"></audio>
+  <audio id="celebrationSound" preload="auto"><source src="celebration_sound.mp3" type="audio/mpeg"></audio>
+
+  <script>
+    const colorRounds = [
+      { color: "Red", hex: "#ef4444", targets: [
+        { emoji: "&#x1F34E;", label: "Apple" }, { emoji: "&#x2764;&#xFE0F;", label: "Heart" }, { emoji: "&#x1F680;", label: "Rocket" }
+      ], others: [
+        { emoji: "&#x1F34C;", label: "Banana" }, { emoji: "&#x1F438;", label: "Frog" }, { emoji: "&#x1F4D8;", label: "Blue Book" }
+      ]},
+      { color: "Blue", hex: "#3b82f6", targets: [
+        { emoji: "&#x1F4D8;", label: "Blue Book" }, { emoji: "&#x1F30A;", label: "Wave" }, { emoji: "&#x1F433;", label: "Whale" }
+      ], others: [
+        { emoji: "&#x1F34E;", label: "Apple" }, { emoji: "&#x2B50;", label: "Star" }, { emoji: "&#x1F33B;", label: "Sunflower" }
+      ]},
+      { color: "Yellow", hex: "#eab308", targets: [
+        { emoji: "&#x2B50;", label: "Star" }, { emoji: "&#x1F34C;", label: "Banana" }, { emoji: "&#x1F33B;", label: "Sunflower" }
+      ], others: [
+        { emoji: "&#x1F30A;", label: "Wave" }, { emoji: "&#x1F352;", label: "Cherries" }, { emoji: "&#x1F438;", label: "Frog" }
+      ]},
+      { color: "Green", hex: "#22c55e", targets: [
+        { emoji: "&#x1F438;", label: "Frog" }, { emoji: "&#x1F422;", label: "Turtle" }, { emoji: "&#x1F34F;", label: "Green Apple" }
+      ], others: [
+        { emoji: "&#x2764;&#xFE0F;", label: "Heart" }, { emoji: "&#x1F433;", label: "Whale" }, { emoji: "&#x1F34C;", label: "Banana" }
+      ]},
+      { color: "Orange", hex: "#f97316", targets: [
+        { emoji: "&#x1F34A;", label: "Orange" }, { emoji: "&#x1F3C0;", label: "Basketball" }, { emoji: "&#x1F955;", label: "Carrot" }
+      ], others: [
+        { emoji: "&#x1F34E;", label: "Apple" }, { emoji: "&#x1F30A;", label: "Wave" }, { emoji: "&#x1F422;", label: "Turtle" }
+      ]},
+      { color: "Purple", hex: "#a855f7", targets: [
+        { emoji: "&#x1F347;", label: "Grapes" }, { emoji: "&#x1F52E;", label: "Crystal Ball" }, { emoji: "&#x1F346;", label: "Eggplant" }
+      ], others: [
+        { emoji: "&#x1F955;", label: "Carrot" }, { emoji: "&#x2B50;", label: "Star" }, { emoji: "&#x1F34F;", label: "Green Apple" }
+      ]},
+    ];
+
+    const ROUND_COUNT = 5;
+    const GIPHY_API_KEY = "kIyJEsGiHN0LpmsNMaYm8SXyj4p2rZjm";
+    const GIPHY_TAGS = ["great job animated cartoon", "gold star cartoon", "you did it animated", "confetti celebration animated", "thumbs up cartoon cute", "hooray cartoon", "super star animated sticker", "well done animated cute"];
+    let giphyCache = [];
+
+    let deck = [], roundIndex = 0, foundCount = 0, targetTotal = 0, correctRounds = 0;
+    const correctSound = document.getElementById("correctSound");
+    const celebrationSound = document.getElementById("celebrationSound");
+
+    let bestVoice = null;
+    function findBestVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices.length) return;
+      const prefs = ["samantha", "zoe", "karen", "fiona", "allison", "ava", "susan"];
+      for (const pref of prefs) {
+        const v = voices.find(v => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en"));
+        if (v) { bestVoice = v; return; }
+      }
+      const english = voices.filter(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("alex"));
+      if (english.length) bestVoice = english[0];
+    }
+    if ("speechSynthesis" in window) { findBestVoice(); window.speechSynthesis.onvoiceschanged = findBestVoice; }
+
+    function speak(text, rate) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = rate || 0.85; u.pitch = 1.05; u.lang = "en-US";
+      if (bestVoice) u.voice = bestVoice;
+      window.speechSynthesis.speak(u);
+    }
+
+    function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+    async function preloadGiphyCache() {
+      try {
+        const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)];
+        const url = `https://api.giphy.com/v1/stickers/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(tag)}&rating=g&limit=25&offset=${Math.floor(Math.random() * 50)}`;
+        const res = await fetch(url); const data = await res.json();
+        if (data.data && data.data.length > 0) giphyCache = data.data.map(g => g.images.fixed_height.url);
+      } catch (e) {}
+    }
+    async function getRandomCelebrationGif() {
+      if (giphyCache.length > 0) { const gif = giphyCache.splice(Math.floor(Math.random() * giphyCache.length), 1)[0]; if (giphyCache.length < 5) preloadGiphyCache(); return gif; }
+      try { const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)]; const url = `https://api.giphy.com/v1/stickers/random?api_key=${GIPHY_API_KEY}&tag=${encodeURIComponent(tag)}&rating=g`; const res = await fetch(url); const data = await res.json(); if (data.data && data.data.images) return data.data.images.fixed_height.url; } catch (e) {}
+      return "giphy.gif";
+    }
+
+    function showScreen(id) { document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
+
+    function buildDots() {
+      const c = document.getElementById("progressDots"); c.innerHTML = "";
+      for (let i = 0; i < ROUND_COUNT; i++) { const d = document.createElement("div"); d.className = "dot" + (i < roundIndex ? " done" : "") + (i === roundIndex ? " current" : ""); c.appendChild(d); }
+    }
+
+    function showRound() {
+      if (roundIndex >= ROUND_COUNT) { finishGame(); return; }
+      const round = deck[roundIndex];
+      foundCount = 0;
+      targetTotal = round.targets.length;
+
+      document.getElementById("topProgress").textContent = (roundIndex + 1) + " of " + ROUND_COUNT;
+      document.getElementById("colorSwatch").style.background = round.hex;
+      document.getElementById("colorSwatch").style.animation = "none";
+      requestAnimationFrame(() => { document.getElementById("colorSwatch").style.animation = "swatchPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)"; });
+      document.getElementById("colorName").textContent = round.color;
+      document.getElementById("colorName").style.color = round.hex;
+      document.getElementById("promptText").textContent = "Tap everything that is " + round.color + "!";
+      document.getElementById("scoreText").textContent = "Found: 0 of " + targetTotal;
+      buildDots();
+
+      const items = shuffle([
+        ...round.targets.map(t => ({ ...t, isTarget: true })),
+        ...round.others.map(o => ({ ...o, isTarget: false }))
+      ]);
+
+      const grid = document.getElementById("objectGrid");
+      grid.innerHTML = "";
+      items.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "object-btn"; btn.type = "button";
+        btn.innerHTML = '<span class="obj-emoji">' + item.emoji + '</span><span class="obj-label">' + item.label + '</span>';
+        btn.addEventListener("click", () => handleTap(btn, item, round));
+        grid.appendChild(btn);
+      });
+
+      setTimeout(() => { speak("Tap everything that is " + round.color + "!", 0.85); }, 300);
+    }
+
+    function handleTap(btn, item, round) {
+      if (btn.classList.contains("found") || btn.classList.contains("correct")) return;
+
+      if (item.isTarget) {
+        foundCount++;
+        btn.classList.add("correct");
+        setTimeout(() => { btn.classList.remove("correct"); btn.classList.add("found"); }, 500);
+        correctSound.currentTime = 0; correctSound.play().catch(() => {});
+        speak("Yes! " + item.label + " is " + round.color + "!", 0.95);
+        document.getElementById("scoreText").textContent = "Found: " + foundCount + " of " + targetTotal;
+
+        if (foundCount >= targetTotal) {
+          correctRounds++;
+          document.getElementById("promptText").textContent = "You found them all!";
+          speak("You found all the " + round.color + " things!", 0.9);
+          setTimeout(() => { roundIndex++; showRound(); }, 2000);
+        }
+      } else {
+        btn.classList.add("wrong");
+        speak("Hmm, " + item.label + " isn't " + round.color + ". Try again!", 0.9);
+        setTimeout(() => { btn.classList.remove("wrong"); }, 500);
+      }
+    }
+
+    function finishGame() {
+      document.getElementById("topProgress").textContent = "";
+      document.getElementById("resultStats").textContent = correctRounds + " of " + ROUND_COUNT + " colors completed!";
+      getRandomCelebrationGif().then(src => { document.getElementById("celebrationImg").src = src; });
+      showScreen("finishScreen");
+      celebrationSound.currentTime = 0; celebrationSound.play().catch(() => {});
+      speak("Color Genius! You found all the colors! Amazing!", 0.9);
+    }
+
+    function startGame() { deck = shuffle([...colorRounds]).slice(0, ROUND_COUNT); roundIndex = 0; correctRounds = 0; showScreen("gameScreen"); showRound(); }
+
+    document.getElementById("speakerBtn").addEventListener("click", () => { if (roundIndex < deck.length) speak("Tap everything that is " + deck[roundIndex].color + "!", 0.85); });
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("playAgainBtn").addEventListener("click", startGame);
+    preloadGiphyCache();
+  </script>
+</body>
+</html>
