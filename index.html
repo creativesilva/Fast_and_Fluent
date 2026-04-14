@@ -26,8 +26,8 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
     html, body {
-      width: 100%; min-height: 100%;
-      overflow-x: hidden; overflow-y: auto;
+      width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto;
+      touch-action: pan-y;
     }
 
     body {
@@ -72,11 +72,9 @@
 
     .screen {
       position: relative; z-index: 1;
-      display: none; flex-direction: column; flex: 1; overflow: hidden;
-      width: 100%; align-items: center; justify-content: space-evenly;
-      text-align: center;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; flex-direction: column; width: 100%;
     }
-    .screen.active { display: flex; }
 
     .brand-logo {
       width: min(22vw, 76px); height: auto;
@@ -247,7 +245,16 @@
       .tile-icon { font-size: 30px; }
       .tile-name { font-size: 12.5px; }
     }
-
+    .install-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.85); color: #fff;
+      padding: 14px 20px; text-align: center;
+      font-size: 14px; z-index: 9999;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: none;
+    }
+    .install-banner b { color: #6ee7b7; }
+    .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
     .reports-btn {
       background: rgba(0,0,0,0.05); border: none; border-radius: 12px;
       padding: 6px 14px; font-size: 12px; font-weight: 700; color: var(--muted);
@@ -285,22 +292,11 @@
     .reports-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 30px 0; }
     .reports-footer { padding: 10px 20px 14px; border-top: 1px solid rgba(0,0,0,0.06); text-align: center; }
     .clear-reports-btn { background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 700; cursor: pointer; padding: 6px 12px; }
-
-    .install-banner {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(0,0,0,0.85); color: #fff;
-      padding: 14px 20px; text-align: center;
-      font-size: 14px; z-index: 9999;
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      display: none;
-    }
-    .install-banner b { color: #6ee7b7; }
-    .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="screen active">
+    <div class="screen">
       <img src="rocket_book_logo.png" alt="Rocket Book logo" class="brand-logo" />
       <div class="app-title">Rocket Book Games</div>
 
@@ -372,24 +368,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="reports-overlay" id="reportsOverlay" onclick="if(event.target===this)closeReports()">
-    <div class="reports-modal">
-      <div class="reports-header">
-        <h2>&#x1F4CA; Reports</h2>
-        <button class="reports-close" onclick="closeReports()">&times;</button>
-      </div>
-      <div class="reports-body scrollable" id="reportsBody"></div>
-      <div class="reports-footer" id="reportsFooter" style="display:none;">
-        <button class="clear-reports-btn" onclick="clearReports()">Clear All Reports</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="install-banner" id="installBanner">
-    <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
-    Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
 
   <script>
@@ -465,14 +443,34 @@
     function closeReports() { document.getElementById('reportsOverlay').classList.remove('open'); }
     function clearReports() { localStorage.removeItem('rocketBookReports'); openReports(); }
 
+    // Prevent accidental scroll/zoom for young children (mobile only)
     document.addEventListener('touchmove', function(e) {
       if (!e.target.closest('.scrollable')) e.preventDefault();
     }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+    // Prompt iOS Safari users to add to home screen
     if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('bannerDismissed')) {
       setTimeout(function() { document.getElementById('installBanner').style.display = 'block'; }, 2000);
     }
   </script>
+
+  <div class="reports-overlay" id="reportsOverlay" onclick="if(event.target===this)closeReports()">
+    <div class="reports-modal">
+      <div class="reports-header">
+        <h2>&#x1F4CA; Reports</h2>
+        <button class="reports-close" onclick="closeReports()">&times;</button>
+      </div>
+      <div class="reports-body scrollable" id="reportsBody"></div>
+      <div class="reports-footer" id="reportsFooter" style="display:none;">
+        <button class="clear-reports-btn" onclick="clearReports()">Clear All Reports</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="install-banner" id="installBanner">
+    <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
+    Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
+  </div>
 </body>
 </html>

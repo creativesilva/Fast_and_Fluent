@@ -16,10 +16,7 @@
       --glass-shadow: 0 8px 32px rgba(0,0,0,0.08); --text: #1a1a2e; --muted: #6b7085; --blur: 28px; --radius: 24px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-    html, body {
-      width: 100%; min-height: 100%;
-      overflow-x: hidden; overflow-y: auto;
-    }
+    html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
       color: var(--text); min-height: 100vh; min-height: 100dvh;
@@ -35,19 +32,16 @@
     }
     .app, button, img { touch-action: manipulation; }
     .app {
-      width: min(100%, 420px);
-      min-height: min(86dvh, 700px); max-height: 700px;
-      background: rgba(255,255,255,0.82);
-      backdrop-filter: blur(28px) saturate(1.5);
-      -webkit-backdrop-filter: blur(28px) saturate(1.5);
-      border-radius: 36px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
+      width: min(100%, 420px); min-height: min(86dvh, 700px);
+      background: var(--glass); backdrop-filter: blur(var(--blur)) saturate(1.6);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
+      border-radius: 36px; box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
       padding: 20px 18px 24px 18px; display: flex; flex-direction: column; align-items: center;
-      position: relative; overflow: hidden;
+      position: relative; overflow: hidden; border: 1px solid var(--glass-border);
     }
     .app::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%); border-radius: 36px; }
 
-    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; width: 100%; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 1; }
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; position: relative; z-index: 1; flex: 1; }
     .screen.active { display: flex; }
     .topbar { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; margin-bottom: 8px; min-height: 36px; position: relative; z-index: 1; }
     .topbar-title { font-size: 15px; font-weight: 800; }
@@ -133,7 +127,6 @@
       .object-grid { gap: 8px; max-width: 280px; }
       .object-btn .obj-emoji { font-size: 32px; }
     }
-
     .install-banner {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: rgba(0,0,0,0.85); color: #fff;
@@ -184,11 +177,6 @@
       </div>
     </div>
   </div>
-
-  <div class="install-banner" id="installBanner">
-  <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
-  Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
-</div>
 
   <audio id="correctSound" preload="auto"><source src="correct.mp3" type="audio/mpeg"></audio>
   <audio id="celebrationSound" preload="auto"><source src="celebration_sound.mp3" type="audio/mpeg"></audio>
@@ -344,10 +332,10 @@
       document.getElementById("topProgress").textContent = "";
       document.getElementById("resultStats").textContent = correctRounds + " of " + ROUND_COUNT + " colors completed!";
       getRandomCelebrationGif().then(src => { document.getElementById("celebrationImg").src = src; });
+      try { var r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Color Splash',date:new Date().toISOString(),correct:correctRounds,total:ROUND_COUNT}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
       showScreen("finishScreen");
       celebrationSound.currentTime = 0; celebrationSound.play().catch(() => {});
       speak("Color Genius! You found all the colors! Amazing!", 0.9);
-      try { const r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Color Splash',date:new Date().toISOString(),correct:correctRounds,total:ROUND_COUNT}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
     }
 
     function startGame() { deck = shuffle([...colorRounds]).slice(0, ROUND_COUNT); roundIndex = 0; correctRounds = 0; showScreen("gameScreen"); showRound(); }
@@ -356,17 +344,21 @@
     document.getElementById("startBtn").addEventListener("click", startGame);
     document.getElementById("playAgainBtn").addEventListener("click", startGame);
     preloadGiphyCache();
-
-    // Lock down touch for young children
+    // Prevent accidental scroll/zoom for young children (mobile only)
     document.addEventListener('touchmove', function(e) {
       if (!e.target.closest('.scrollable')) e.preventDefault();
     }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
-    // Show install banner on iOS Safari
+    // Prompt iOS Safari users to add to home screen
     if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('bannerDismissed')) {
       setTimeout(function() { document.getElementById('installBanner').style.display = 'block'; }, 2000);
     }
   </script>
+
+  <div class="install-banner" id="installBanner">
+    <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
+    Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
+  </div>
 </body>
 </html>

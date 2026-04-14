@@ -40,8 +40,8 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-      width: 100%; min-height: 100%;
-      overflow-x: hidden; overflow-y: auto;
+      width: 100%; min-height: 100%; margin: 0; padding: 0;
+      overflow-x: hidden; overflow-y: auto; touch-action: pan-y;
     }
 
     body {
@@ -67,12 +67,11 @@
     .app, button, img { touch-action: manipulation; }
 
     .app {
-      width: min(430px, 100%);
-      min-height: 100vh; min-height: 100dvh;
-      max-height: 100vh; max-height: 100dvh;
+      width: min(100%, 430px);
+      min-height: 0; max-height: min(96dvh, 800px); height: min(96dvh, 800px);
       background: rgba(255,255,255,0.92);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-radius: 36px;
+      border-radius: 32px;
       box-shadow: var(--shadow);
       padding: 20px 20px 24px 20px;
       display: flex; flex-direction: column; justify-content: flex-start;
@@ -88,7 +87,11 @@
         radial-gradient(circle at 70% 75%, rgba(59,130,246,0.05), transparent 40%);
     }
 
-    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; width: 100%; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 1; }
+    .screen {
+      flex: 1; display: none; align-items: center; justify-content: center;
+      text-align: center; flex-direction: column; padding: 8px 4px 0 4px;
+      position: relative; z-index: 1;
+    }
     .screen.active { display: flex; }
 
     .topbar {
@@ -340,7 +343,6 @@
       .game-word { font-size: clamp(30px, 8vw, 44px); }
       .segmented-actions { width: 260px; }
     }
-
     .install-banner {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: rgba(0,0,0,0.85); color: #fff;
@@ -964,7 +966,7 @@
 
       playCelebration();
       launchConfetti();
-      try { const r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Brain Games',date:new Date().toISOString(),correct:correct,total:total}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
+      try { var r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Brain Games',date:new Date().toISOString(),correct:correct,total:total}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
       showScreen("finish");
     }
 
@@ -985,12 +987,13 @@
     ============================== */
     preloadGiphyCache();
     showScreen("menu");
-
+    // Prevent accidental scroll/zoom for young children (mobile only)
     document.addEventListener('touchmove', function(e) {
       if (!e.target.closest('.scrollable')) e.preventDefault();
     }, { passive: false });
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+    // Prompt iOS Safari users to add to home screen
     if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('bannerDismissed')) {
       setTimeout(function() { document.getElementById('installBanner').style.display = 'block'; }, 2000);
     }
