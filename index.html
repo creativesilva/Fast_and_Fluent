@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Rocket Book" />
@@ -26,19 +26,20 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
     html, body {
-      width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto;
-      touch-action: pan-y;
+      width: 100%; height: 100%; height: 100dvh;
+      overflow: hidden; position: fixed;
+      touch-action: none;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
       color: var(--text);
-      min-height: 100vh; min-height: 100dvh;
-      display: flex; align-items: center; justify-content: center;
+      height: 100vh; height: 100dvh;
+      display: flex; align-items: stretch; justify-content: center;
       padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
       user-select: none; -webkit-user-select: none;
       -webkit-text-size-adjust: 100%;
-      overscroll-behavior-y: contain;
+      overflow: hidden;
       background:
         radial-gradient(ellipse at 20% 0%, rgba(147,130,255,0.25), transparent 50%),
         radial-gradient(ellipse at 80% 5%, rgba(59,180,246,0.20), transparent 45%),
@@ -51,15 +52,16 @@
     .app, button, img, a { touch-action: manipulation; }
 
     .app {
-      width: min(100%, 420px);
-      max-height: min(96dvh, 820px);
+      width: 100%; max-width: 420px;
+      height: 100%;
       background: var(--glass);
       backdrop-filter: blur(var(--blur)) saturate(1.6);
       -webkit-backdrop-filter: blur(var(--blur)) saturate(1.6);
-      border-radius: 36px;
+      border-radius: 0;
       box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
-      padding: 24px 20px 28px 20px;
+      padding: 12px 20px 10px 20px;
       display: flex; flex-direction: column; align-items: center;
+      justify-content: space-evenly;
       position: relative; overflow: hidden;
       border: 1px solid var(--glass-border);
     }
@@ -67,14 +69,11 @@
     .app::before {
       content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%);
-      border-radius: 36px;
+      border-radius: 0;
     }
 
-    .screen {
-      position: relative; z-index: 1;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; flex-direction: column; width: 100%;
-    }
+    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .screen.active { display: flex; }
 
     .brand-logo {
       width: min(22vw, 76px); height: auto;
@@ -245,6 +244,55 @@
       .tile-icon { font-size: 30px; }
       .tile-name { font-size: 12.5px; }
     }
+
+    .reports-btn {
+      background: rgba(0,0,0,0.05); border: none; border-radius: 12px;
+      padding: 6px 14px; font-size: 12px; font-weight: 700; color: var(--muted);
+      cursor: pointer; margin-top: 4px;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .reports-btn:active { transform: scale(0.95); }
+    .reports-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .reports-overlay.open { display: flex; }
+    .reports-modal {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-radius: 24px; width: 100%; max-width: 380px;
+      max-height: 80dvh; display: flex; flex-direction: column;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.6); overflow: hidden;
+    }
+    .reports-header { padding: 16px 20px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .reports-header h2 { font-size: 18px; font-weight: 800; margin: 0; }
+    .reports-close { background: rgba(0,0,0,0.06); border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .reports-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 20px 16px; }
+    .reports-body.scrollable { touch-action: pan-y; }
+    .report-card { background: rgba(0,0,0,0.03); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+    .report-card .rc-top { display: flex; justify-content: space-between; align-items: center; }
+    .report-card .rc-game { font-size: 14px; font-weight: 700; }
+    .report-card .rc-score { font-size: 14px; font-weight: 800; }
+    .report-card .rc-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .report-card .rc-bar { height: 4px; background: rgba(0,0,0,0.06); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+    .report-card .rc-fill { height: 100%; border-radius: 2px; }
+    .reports-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 30px 0; }
+    .reports-footer { padding: 10px 20px 14px; border-top: 1px solid rgba(0,0,0,0.06); text-align: center; }
+    .clear-reports-btn { background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 700; cursor: pointer; padding: 6px 12px; }
+
+    .install-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.85); color: #fff;
+      padding: 14px 20px; text-align: center;
+      font-size: 14px; z-index: 9999;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: none;
+    }
+    .install-banner b { color: #6ee7b7; }
+    .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -314,12 +362,31 @@
       </div>
 
       <div class="footer">
+        <button class="reports-btn" onclick="openReports()">&#x1F4CA; Reports</button>
         <div class="micro-note">
           Designed by
           <a class="credit-link" href="https://www.instagram.com/silvateaches/" target="_blank" rel="noopener noreferrer">CreativeSilva</a>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="reports-overlay" id="reportsOverlay" onclick="if(event.target===this)closeReports()">
+    <div class="reports-modal">
+      <div class="reports-header">
+        <h2>&#x1F4CA; Reports</h2>
+        <button class="reports-close" onclick="closeReports()">&times;</button>
+      </div>
+      <div class="reports-body scrollable" id="reportsBody"></div>
+      <div class="reports-footer" id="reportsFooter" style="display:none;">
+        <button class="clear-reports-btn" onclick="clearReports()">Clear All Reports</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="install-banner" id="installBanner">
+    <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
+    Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
 
   <script>
@@ -365,6 +432,43 @@
 
     if (currentMode === "elc") {
       switchMode("elc");
+    }
+
+    function openReports() {
+      var reports = JSON.parse(localStorage.getItem('rocketBookReports') || '[]');
+      var body = document.getElementById('reportsBody');
+      var footer = document.getElementById('reportsFooter');
+      if (!reports.length) {
+        body.innerHTML = '<div class="reports-empty">No reports yet!<br>Play a game to see results here.</div>';
+        footer.style.display = 'none';
+      } else {
+        footer.style.display = '';
+        var html = '';
+        var sorted = reports.slice().reverse();
+        for (var i = 0; i < sorted.length; i++) {
+          var rep = sorted[i];
+          var pct = rep.total > 0 ? Math.round((rep.correct / rep.total) * 100) : 0;
+          var color = pct >= 80 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444';
+          var stars = pct === 100 ? ' ⭐' : '';
+          var d = new Date(rep.date);
+          var dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          var timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          html += '<div class="report-card"><div class="rc-top"><span class="rc-game">' + rep.game + '</span><span class="rc-score" style="color:' + color + '">' + rep.correct + '/' + rep.total + stars + '</span></div><div class="rc-date">' + dateStr + ' at ' + timeStr + '</div><div class="rc-bar"><div class="rc-fill" style="width:' + pct + '%;background:' + color + '"></div></div></div>';
+        }
+        body.innerHTML = html;
+      }
+      document.getElementById('reportsOverlay').classList.add('open');
+    }
+    function closeReports() { document.getElementById('reportsOverlay').classList.remove('open'); }
+    function clearReports() { localStorage.removeItem('rocketBookReports'); openReports(); }
+
+    document.addEventListener('touchmove', function(e) {
+      if (!e.target.closest('.scrollable')) e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+    if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('bannerDismissed')) {
+      setTimeout(function() { document.getElementById('installBanner').style.display = 'block'; }, 2000);
     }
   </script>
 </body>

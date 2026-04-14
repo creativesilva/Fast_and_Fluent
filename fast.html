@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
   />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -38,24 +38,19 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
-      touch-action: pan-y;
+    html, body {
+      width: 100%; height: 100%; height: 100dvh;
+      overflow: hidden; position: fixed;
+      touch-action: none;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
       color: var(--text);
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: 100vh;
+      height: 100dvh;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
       padding-top: max(14px, env(safe-area-inset-top));
       padding-right: max(14px, env(safe-area-inset-right));
@@ -64,7 +59,7 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-text-size-adjust: 100%;
-      overscroll-behavior-y: contain;
+      overflow: hidden;
       background:
         radial-gradient(circle at top left, rgba(251,146,60,0.22), transparent 24%),
         radial-gradient(circle at top right, rgba(59,130,246,0.20), transparent 24%),
@@ -80,13 +75,12 @@
     }
 
     .app {
-      width: min(100%, 430px);
-      min-height: min(86vh, 800px);
-      min-height: min(86dvh, 800px);
+      width: 100%; max-width: 430px;
+      height: 100%;
       background: rgba(255,255,255,0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 32px;
+      border-radius: 0;
       box-shadow: var(--shadow);
       padding: 20px 20px 24px 20px;
       display: flex;
@@ -176,21 +170,8 @@
       display: none;
     }
 
-    .screen {
-      flex: 1;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      flex-direction: column;
-      padding: 8px 4px 0 4px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .screen.active {
-      display: flex;
-    }
+    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .screen.active { display: flex; }
 
     .topbar {
       display: flex;
@@ -481,6 +462,16 @@
         width: 168px;
       }
     }
+    .install-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.85); color: #fff;
+      padding: 14px 20px; text-align: center;
+      font-size: 14px; z-index: 9999;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: none;
+    }
+    .install-banner b { color: #6ee7b7; }
+    .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -527,6 +518,11 @@
       <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration image" />
       <div class="compact-buttons" id="finishButtons"></div>
     </div>
+  </div>
+
+  <div class="install-banner" id="installBanner">
+    <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
+    Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
 
   <audio id="celebrationSound" preload="auto">
@@ -829,6 +825,7 @@
         getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
         buildFinishButtons();
         playCelebrationSound();
+        try { const r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Fast & Fluent',date:new Date().toISOString(),correct:fastDeck.length,total:fastSentences.length}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
         showScreen("finish");
         return;
       }
@@ -863,6 +860,15 @@
     preloadGiphyCache();
     updateHeader();
     setScreenTreatment();
+
+    document.addEventListener('touchmove', function(e) {
+      if (!e.target.closest('.scrollable')) e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+    if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('bannerDismissed')) {
+      setTimeout(function() { document.getElementById('installBanner').style.display = 'block'; }, 2000);
+    }
   </script>
 </body>
 </html>
