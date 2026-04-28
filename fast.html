@@ -369,6 +369,18 @@
       text-underline-offset: 5px;
     }
 
+    .sentence-emoji {
+      display: block;
+      font-size: clamp(74px, 18vw, 112px);
+      line-height: 1;
+      margin: 0 auto 16px auto;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.12));
+    }
+
+    .sentence-text {
+      display: block;
+    }
+
     .mode-label {
       margin-top: 4px;
       font-size: 16px;
@@ -554,16 +566,16 @@
     const fastTitle = "Variant Vowel /o/";
 
     const fastSentences = [
-      "We will <u>haul</u> the garbage.",
-      "That will <u>cause</u> us harm.",
-      "He <u>saw</u> the shooting star.",
-      "The bear used his <u>claw</u>.",
-      "My cat hurt her <u>paw</u>.",
-      "We will go at <u>dawn</u>.",
-      "The <u>moon</u> looks beautiful.",
-      "Would you like some <u>soup</u>?",
-      "I <u>love</u> my mom and dad.",
-      "Will you be my <u>friend</u>?"
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🗑️</span><span class=\"sentence-text\">We will <u>haul</u> the garbage.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">⚠️</span><span class=\"sentence-text\">That will <u>cause</u> us harm.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🌠</span><span class=\"sentence-text\">He <u>saw</u> the shooting star.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🐻</span><span class=\"sentence-text\">The bear used his <u>claw</u>.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🐾</span><span class=\"sentence-text\">My cat hurt her <u>paw</u>.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🌅</span><span class=\"sentence-text\">We will go at <u>dawn</u>.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🌕</span><span class=\"sentence-text\">The <u>moon</u> looks beautiful.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🍲</span><span class=\"sentence-text\">Would you like some <u>soup</u>?</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">❤️</span><span class=\"sentence-text\">I <u>love</u> my mom and dad.</span>",
+      "<span class=\"sentence-emoji\" aria-hidden=\"true\">🤝</span><span class=\"sentence-text\">Will you be my <u>friend</u>?</span>"
     ];
 
     const GIPHY_API_KEY = "kIyJEsGiHN0LpmsNMaYm8SXyj4p2rZjm";

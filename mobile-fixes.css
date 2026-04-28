@@ -83,11 +83,16 @@ body {
   }
 
   html.browser-chrome .sentence-wrap {
-    min-height: 170px !important;
+    min-height: 230px !important;
   }
 
   html.browser-chrome .sentence {
     font-size: clamp(30px, 7.6vw, 48px) !important;
+  }
+
+  html.browser-chrome .sentence-emoji {
+    font-size: clamp(72px, 19vw, 96px) !important;
+    margin-bottom: 12px !important;
   }
 
   html.browser-chrome .speaker-zone {
@@ -124,7 +129,7 @@ body {
   }
 
   html.browser-chrome .sentence-wrap {
-    min-height: 150px !important;
+    min-height: 210px !important;
   }
 
   html.browser-chrome .speaker-zone {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "rocket-book-games-2026-04-28-mobile-shell-1";
+const CACHE_NAME = "rocket-book-games-2026-04-28-fast-emoji-1";
 
 const SHELL_ASSETS = [
   "./",

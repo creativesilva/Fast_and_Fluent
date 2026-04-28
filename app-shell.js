@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "2026-04-28-mobile-shell-1";
+  const APP_VERSION = "2026-04-28-fast-emoji-1";
   const VERSION_KEY = "rocketBookGamesVersion";
   const docEl = document.documentElement;
 
