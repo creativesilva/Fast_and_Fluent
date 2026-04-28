@@ -354,6 +354,8 @@
     .install-banner b { color: #6ee7b7; }
     .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
+  <link rel="manifest" href="manifest.webmanifest?v=20260428a" />
+  <link rel="stylesheet" href="mobile-fixes.css?v=20260428a" />
 </head>
 <body>
   <div class="app" id="app">
@@ -493,7 +495,7 @@
       <div class="result-title" id="finishTitle">Great Job!</div>
       <div class="result-stats" id="finishStats"></div>
       <div class="result-text" id="finishText"></div>
-      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration" />
+      <img id="celebrationImg" class="celebration-img" alt="Celebration" />
       <div class="compact-buttons" id="finishButtons"></div>
     </div>
   </div>
@@ -632,7 +634,7 @@
       } catch (e) {
         console.log("Giphy fetch failed");
       }
-      return "giphy.gif";
+      return "rocket_book_logo.png";
     }
 
     function playCelebration() {
@@ -923,7 +925,12 @@
       }
 
       finishStats.textContent = `${correct} of ${total} correct (${pct}%)`;
-      getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
+      if (window.RocketBookApp && window.RocketBookApp.showCelebrationImage) {
+        window.RocketBookApp.showCelebrationImage(celebrationImg, getRandomCelebrationGif(), "rocket_book_logo.png");
+      } else {
+        celebrationImg.removeAttribute("src");
+        getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
+      }
 
       finishButtons.innerHTML = "";
 
@@ -1002,5 +1009,6 @@
     <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
     Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
+  <script src="app-shell.js?v=20260428a" defer></script>
 </body>
 </html>

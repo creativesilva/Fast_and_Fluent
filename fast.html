@@ -493,6 +493,8 @@
     .install-banner b { color: #6ee7b7; }
     .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
+  <link rel="manifest" href="manifest.webmanifest?v=20260428a" />
+  <link rel="stylesheet" href="mobile-fixes.css?v=20260428a" />
 </head>
 <body>
   <div class="app" id="app">
@@ -535,7 +537,7 @@
       <div class="result-title" id="finishTitle">Great Job, Reader!</div>
       <div class="result-time" id="finishTime">Final Time: 00:00.0</div>
       <div class="result-text" id="finishText">You finished your practice.</div>
-      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration image" />
+      <img id="celebrationImg" class="celebration-img" alt="Celebration image" />
       <div class="compact-buttons" id="finishButtons"></div>
     </div>
   </div>
@@ -671,7 +673,7 @@
       } catch (e) {
         console.log("Giphy fetch failed");
       }
-      return "giphy.gif";
+      return "rocket_book_logo.png";
     }
 
     function formatTime(ms) {
@@ -837,7 +839,12 @@
         finishTime.textContent = `Final Time: ${formatTime(fastElapsedMs)}`;
         finishTime.style.display = "block";
         finishText.textContent = "Write down your time, then read again and try to beat it.";
-        getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
+        if (window.RocketBookApp && window.RocketBookApp.showCelebrationImage) {
+          window.RocketBookApp.showCelebrationImage(celebrationImg, getRandomCelebrationGif(), "rocket_book_logo.png");
+        } else {
+          celebrationImg.removeAttribute("src");
+          getRandomCelebrationGif().then(src => { celebrationImg.src = src; });
+        }
         buildFinishButtons();
         playCelebrationSound();
         try { var r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Fast & Fluent',date:new Date().toISOString(),correct:fastSentences.length,total:fastSentences.length}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
@@ -891,5 +898,6 @@
     <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
     Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
+  <script src="app-shell.js?v=20260428a" defer></script>
 </body>
 </html>

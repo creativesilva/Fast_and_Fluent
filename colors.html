@@ -139,6 +139,8 @@
     .install-banner b { color: #6ee7b7; }
     .install-banner .close-banner { position: absolute; top: 8px; right: 12px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
   </style>
+  <link rel="manifest" href="manifest.webmanifest?v=20260428a" />
+  <link rel="stylesheet" href="mobile-fixes.css?v=20260428a" />
 </head>
 <body>
   <div class="app">
@@ -171,7 +173,7 @@
       <div class="result-title">Color Genius!</div>
       <div class="result-stats" id="resultStats"></div>
       <div class="result-text">You know your colors! Fantastic!</div>
-      <img id="celebrationImg" class="celebration-img" src="giphy.gif" alt="Celebration" />
+      <img id="celebrationImg" class="celebration-img" alt="Celebration" />
       <div class="btn-row">
         <button class="glass-btn btn-neutral" onclick="window.location.href='index.html'" type="button">Home</button>
         <button class="glass-btn btn-primary" id="playAgainBtn" type="button">Play Again</button>
@@ -261,7 +263,7 @@
     async function getRandomCelebrationGif() {
       if (giphyCache.length > 0) { const gif = giphyCache.splice(Math.floor(Math.random() * giphyCache.length), 1)[0]; if (giphyCache.length < 5) preloadGiphyCache(); return gif; }
       try { const tag = GIPHY_TAGS[Math.floor(Math.random() * GIPHY_TAGS.length)]; const url = `https://api.giphy.com/v1/stickers/random?api_key=${GIPHY_API_KEY}&tag=${encodeURIComponent(tag)}&rating=g`; const res = await fetch(url); const data = await res.json(); if (data.data && data.data.images) return data.data.images.fixed_height.url; } catch (e) {}
-      return "giphy.gif";
+      return "rocket_book_logo.png";
     }
 
     function showScreen(id) { document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
@@ -332,7 +334,13 @@
     function finishGame() {
       document.getElementById("topProgress").textContent = "";
       document.getElementById("resultStats").textContent = correctRounds + " of " + ROUND_COUNT + " colors completed!";
-      getRandomCelebrationGif().then(src => { document.getElementById("celebrationImg").src = src; });
+      const celebrationImage = document.getElementById("celebrationImg");
+      if (window.RocketBookApp && window.RocketBookApp.showCelebrationImage) {
+        window.RocketBookApp.showCelebrationImage(celebrationImage, getRandomCelebrationGif(), "rocket_book_logo.png");
+      } else {
+        celebrationImage.removeAttribute("src");
+        getRandomCelebrationGif().then(src => { celebrationImage.src = src; });
+      }
       try { var r=JSON.parse(localStorage.getItem('rocketBookReports')||'[]'); r.push({game:'Color Splash',date:new Date().toISOString(),correct:correctRounds,total:ROUND_COUNT}); localStorage.setItem('rocketBookReports',JSON.stringify(r)); } catch(e){}
       showScreen("finishScreen");
       celebrationSound.currentTime = 0; celebrationSound.play().catch(() => {});
@@ -361,5 +369,6 @@
     <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
     Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
+  <script src="app-shell.js?v=20260428a" defer></script>
 </body>
 </html>

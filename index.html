@@ -293,6 +293,8 @@
     .reports-footer { padding: 10px 20px 14px; border-top: 1px solid rgba(0,0,0,0.06); text-align: center; }
     .clear-reports-btn { background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 700; cursor: pointer; padding: 6px 12px; }
   </style>
+  <link rel="manifest" href="manifest.webmanifest?v=20260428a" />
+  <link rel="stylesheet" href="mobile-fixes.css?v=20260428a" />
 </head>
 <body>
   <div class="app">
@@ -472,5 +474,6 @@
     <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none';localStorage.setItem('bannerDismissed','1')">&times;</button>
     Tap <b>Share &#x2191;</b> then <b>Add to Home Screen</b> for the best experience!
   </div>
+  <script src="app-shell.js?v=20260428a" defer></script>
 </body>
 </html>
