@@ -646,11 +646,12 @@
     <div class="screen active" id="rainbowHomeScreen">
       <img src="rainbow_reader_logo.png" alt="Rainbow Reader logo" class="brand-logo">
       <div class="title">Rainbow Reader</div>
-      <div class="subtitle">Choose a color list</div>
-      <div class="selector-note">Tap the button below to select a color list.</div>
+      <div class="subtitle">Choose a word list</div>
+      <div class="selector-note">Tap the button below to select a word list.</div>
 
       <div class="selector-wrap">
         <select class="selector" id="rainbowListSelect">
+          <option value="Unit 6 Week 2">Unit 6 Week 2</option>
           <option value="Red">Red</option>
           <option value="Orange">Orange</option>
           <option value="Yellow">Yellow</option>
@@ -673,7 +674,7 @@
     <div class="screen" id="rainbowModeScreen">
       <img src="rainbow_reader_logo.png" alt="Rainbow Reader logo" class="brand-logo">
       <div class="title">Rainbow Reader</div>
-      <div class="subtitle" id="rainbowModeTitle">Red List</div>
+      <div class="subtitle" id="rainbowModeTitle">Unit 6 Week 2 List</div>
       <div class="small-note">
         Practice your words in order, or tap Shuffle for a mixed-up challenge.
       </div>
@@ -746,6 +747,9 @@
 
   <script>
     const rainbowLists = {
+      "Unit 6 Week 2": [
+        "brother","father","friend","love","mother","picture"
+      ],
       Red: [
         "I","can","the","we","see","a","like","to","and","go","you","do","my","are","he","with","is","little","she","was"
       ],
@@ -822,11 +826,12 @@
       Brown: { selector: "brown-theme", app: "theme-brown" },
       Pink: { selector: "pink-theme", app: "theme-pink" },
       Gray: { selector: "gray-theme", app: "theme-gray" },
+      "Unit 6 Week 2": { selector: "choice-theme", app: "theme-choice" },
       "Your Choice": { selector: "choice-theme", app: "theme-choice" }
     };
 
     let currentMode = "home";
-    let rainbowCurrentColor = "Red";
+    let rainbowCurrentColor = "Unit 6 Week 2";
     let rainbowDeck = [];
     let rainbowIndex = 0;
     let rainbowShuffled = false;
